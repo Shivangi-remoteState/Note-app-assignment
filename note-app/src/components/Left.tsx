@@ -1,8 +1,10 @@
+import { useEffect, useState } from "react";
+import { api } from "../api/axios";
+import type { Folder } from "../types/api";
 import {
   Archive,
   FileText,
-  Folder,
-  FolderOpen,
+  Folder as FolderIcon,
   FolderPlus,
   Plus,
   Search,
@@ -10,12 +12,53 @@ import {
   Trash,
 } from "lucide-react";
 
+interface folderIdProps {
+  onClickFolder: (id: string) => void;
+}
+export default function Left({ onClickFolder }: folderIdProps) {
+  const [folders, setFolders] = useState<Folder[]>([]);
+  const [showInput, setShowInput] = useState(false);
+  const [folderName, setFolderName] = useState("");
+  const [loading, setLoading] = useState(false);
+  // fetching folder to show on sidebar
+  useEffect(() => {
+    async function fetchFolder() {
+      try {
+        const response = await api.get("/folders");
+        // console.log(response);
 
-export default function Left() {
+        const userFolder = response.data.folders;
+        // console.log("Fetched folders:", userFolder);
+        setFolders(userFolder);
+      } catch (error) {
+        console.log("Error in fetching folder", error);
+      }
+    }
+
+    fetchFolder();
+  }, []);
+  // add folder when click on save button
+  async function handleCreateFolder() {
+    if (!folderName.trim()) return;
+    try {
+      setLoading(true);
+      await api.post("/folders", { name: folderName });
+      const response = await api.get("/folders");
+      // console.log("post response:", response.data);
+      setFolders(response.data.folders);
+      setFolderName("");
+      setShowInput(false);
+    } catch (error) {
+      console.log("Error when creating folder:", error);
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return (
     <div
       className="
-        w-1/4
+        w-sidebar
         h-screen 
         px-4 py-5
         flex flex-col 
@@ -45,7 +88,7 @@ export default function Left() {
       <div className="flex flex-col gap-2">
         <div className="text-sm py-1 px-2 font-name">Recents</div>
         <div className="flex flex-col gap-1">
-          <div className="flex gap-2 items-center  font-name py-1 px-2 hover:bg-hoverFile rounded">
+          <div className="flex gap-2 items-center font-name py-1 px-2 hover:bg-hoverFile rounded">
             <div>
               <FileText size={20} />
             </div>
@@ -70,11 +113,46 @@ export default function Left() {
       <div className="flex flex-col gap-2 py-1 px-2 ">
         <div className="flex items-center justify-between gap-1">
           <div className="text-sm font-semibold">Folders</div>
-          <button className="opacity-80">
+          <button className="opacity-80" onClick={() => setShowInput(true)}>
             <FolderPlus size={16} />
           </button>
         </div>
-        <div className="flex flex-col gap-1">
+        {showInput && (
+          <div className="flex items-center gap-2">
+            <input
+              type="text"
+              value={folderName}
+              onChange={(e) => setFolderName(e.target.value)}
+              placeholder="Enter folder name"
+              className="border px-2 py-1 text-sm"
+            />
+            <button
+              onClick={handleCreateFolder}
+              disabled={loading}
+              className="bg-blue-500 text-white px-2 py-1 rounded text-sm"
+            >
+              Save
+            </button>
+          </div>
+        )}
+        <div className="flex flex-col gap-1 max-h-60 overflow-y-auto">
+          {folders.map((folder) => (
+            <div
+              key={folder.id}
+              onClick={() => {
+                // console.log("clicked folder from left",folder.id)
+                onClickFolder(folder.id);
+              }}
+              className="flex items-center gap-3 px-2 py-1 hover:bg-hoverFile rounded cursor-pointer"
+            >
+              <FolderIcon size={18} />
+              <div className="text-sm hover:text-base">
+                {folder?.name || "Untitled"}
+              </div>
+            </div>
+          ))}
+        </div>
+        {/* <div className="flex flex-col gap-1">
           <div className="flex items-center gap-3">
             <span>
               <FolderOpen size={18} />
@@ -93,19 +171,8 @@ export default function Left() {
             </span>
             <div className="text-sm hover:text-base">Travel</div>
           </div>
-          <div className="flex items-center gap-3">
-            <span>
-              <Folder size={18} />
-            </span>
-            <div className="text-sm hover:text-base">Events</div>
-          </div>
-          <div className="flex items-center gap-3">
-            <span>
-              <Folder size={18} />
-            </span>
-            <div className="text-sm hover:text-base">Finanaces</div>
-          </div>
-        </div>
+         
+        </div> */}
       </div>
       {/* more section*/}
       <div className="flex flex-col gap-2">
