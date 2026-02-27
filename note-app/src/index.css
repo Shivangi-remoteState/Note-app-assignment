@@ -1,0 +1,36 @@
+@import "tailwindcss";
+@theme {
+  --color-sidebar: #0e0e0e;
+  /* --color-back: #5c5c5c; */
+
+  --color
+  --color-hoverFile: #312eb5;
+  /* --color-border: */
+  --color-card: #232323;
+  /* rightbackgr */
+  --color-right-bg: #5c5c5c;
+  /* --color-card-active-bg: rgba(200, 255, 255, 0.1); */
+  --color-noteMenu: #333333;
+
+  --font-nowted: "Kaushan Script";
+  --font-name: "Source Sans Pro";
+  --font-regular-weight: 400px;
+
+  --spacing-gap: 28px;
+
+  --width-sidebar: 20%;
+  --width-middle: 25%;
+  --width-right: 55%;
+
+  --text-base: 16px;
+
+  --color-border: #2a2a2a;
+
+  --text-title-size: 16px;
+  --text-date-size: 12px;
+  --text-preview-size: 13px;
+
+  --text-heading: 24px;
+  --text-body: 14px;
+  --toolbar-icon-size: 20px;
+}

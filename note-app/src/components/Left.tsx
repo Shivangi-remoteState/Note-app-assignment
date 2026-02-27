@@ -1,0 +1,139 @@
+import {
+  Archive,
+  FileText,
+  Folder,
+  FolderOpen,
+  FolderPlus,
+  Plus,
+  Search,
+  Star,
+  Trash,
+} from "lucide-react";
+
+
+export default function Left() {
+  return (
+    <div
+      className="
+        w-1/4
+        h-screen 
+        px-4 py-5
+        flex flex-col 
+        gap-gap
+     
+      "
+    >
+      <div className="flex items-center justify-between ">
+        <div className="flex items-center ">
+          <img src="/images/Nowted.svg" className="w-20" />
+          {/* <div className="font-nowted">Nowted</div> */}
+          <img src="/images/Frame.svg" className="w-3" />
+        </div>
+
+        <button className="hover:opacity-80">
+          <Search size={20} />
+        </button>
+      </div>
+      <div className="flex justify-center bg-card gap-2 rounded-sm p-2">
+        <button>
+          <Plus size={20} />
+        </button>
+        <div className="font-name">New Note</div>
+      </div>
+
+      {/* recent */}
+      <div className="flex flex-col gap-2">
+        <div className="text-sm py-1 px-2 font-name">Recents</div>
+        <div className="flex flex-col gap-1">
+          <div className="flex gap-2 items-center  font-name py-1 px-2 hover:bg-hoverFile rounded">
+            <div>
+              <FileText size={20} />
+            </div>
+            <div className="text-sm">Reflection on the Month</div>
+          </div>
+          <div className="flex gap-2 items-center font-name py-1 px-2  hover:bg-hoverFile rounded">
+            <div>
+              <FileText size={20} />
+            </div>
+            <div>Project proposal</div>
+          </div>
+          <div className="flex gap-2 items-center font-name py-1 px-2  hover:bg-hoverFile rounded">
+            <div>
+              <FileText size={20} />
+            </div>
+            <div>Travel intinerary</div>
+          </div>
+        </div>
+      </div>
+
+      {/* Folders */}
+      <div className="flex flex-col gap-2 py-1 px-2 ">
+        <div className="flex items-center justify-between gap-1">
+          <div className="text-sm font-semibold">Folders</div>
+          <button className="opacity-80">
+            <FolderPlus size={16} />
+          </button>
+        </div>
+        <div className="flex flex-col gap-1">
+          <div className="flex items-center gap-3">
+            <span>
+              <FolderOpen size={18} />
+            </span>
+            <div className="text-sm hover:text-base ">Personal</div>
+          </div>
+          <div className="flex items-center gap-3">
+            <span>
+              <Folder size={18} />
+            </span>
+            <div className="text-sm hover:text-base">Work</div>
+          </div>
+          <div className="flex items-center gap-3">
+            <span>
+              <Folder size={18} />
+            </span>
+            <div className="text-sm hover:text-base">Travel</div>
+          </div>
+          <div className="flex items-center gap-3">
+            <span>
+              <Folder size={18} />
+            </span>
+            <div className="text-sm hover:text-base">Events</div>
+          </div>
+          <div className="flex items-center gap-3">
+            <span>
+              <Folder size={18} />
+            </span>
+            <div className="text-sm hover:text-base">Finanaces</div>
+          </div>
+        </div>
+      </div>
+      {/* more section*/}
+      <div className="flex flex-col gap-2">
+        <div className="text-sm px-2 text-gray-300">More</div>
+
+        <div className="flex flex-col gap-1">
+          <div className="flex items-center gap-3 px-2 py-1 hover:bg-hoverFile rounded cursor-pointer">
+            <span className="text-base">
+              <Star size={16} />
+            </span>
+            <div className="text-sm">Favorites</div>
+          </div>
+
+          <div className="flex items-center gap-3 px-2 py-1 hover:bg-hoverFile rounded cursor-pointer">
+            <span className="text-base">
+              <Trash size={16} />
+            </span>
+            <div className="text-sm">Trash</div>
+          </div>
+
+          <div className="flex items-center gap-3 px-2 py-1 hover:bg-hoverFile rounded cursor-pointer">
+            <span className="text-base">
+              <Archive size={16} />
+            </span>
+            <div className="text-sm">Archived Notes</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
