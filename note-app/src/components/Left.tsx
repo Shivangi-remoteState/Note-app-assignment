@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { api } from "../api/axios";
 import type { Folder } from "../types/api";
+import { useNavigate } from "react-router-dom";
+
 import {
   Archive,
   FileText,
@@ -12,14 +14,18 @@ import {
   Trash,
 } from "lucide-react";
 
-interface folderIdProps {
-  onClickFolder: (id: string) => void;
-}
-export default function Left({ onClickFolder }: folderIdProps) {
+// interface folderIdProps {
+//   onClickFolder: (id: string) => void;
+// }
+export default function Left() {
   const [folders, setFolders] = useState<Folder[]>([]);
+
   const [showInput, setShowInput] = useState(false);
   const [folderName, setFolderName] = useState("");
   const [loading, setLoading] = useState(false);
+
+  const navigate = useNavigate();
+
   // fetching folder to show on sidebar
   useEffect(() => {
     async function fetchFolder() {
@@ -141,7 +147,8 @@ export default function Left({ onClickFolder }: folderIdProps) {
               key={folder.id}
               onClick={() => {
                 // console.log("clicked folder from left",folder.id)
-                onClickFolder(folder.id);
+                // onClickFolder(folder.id);
+                navigate(`/folder/${folder.id}`);
               }}
               className="flex items-center gap-3 px-2 py-1 hover:bg-hoverFile rounded cursor-pointer"
             >

@@ -2,14 +2,21 @@ import { useEffect, useState } from "react";
 import { api } from "../api/axios";
 import type { Note } from "../types/api";
 import Card from "./Card";
+import { useNavigate, useParams } from "react-router-dom";
 
-interface Middleprops {
-  folderId: string;
-  onSelectNote: (id: string) => void;
-}
-// fetchingnote from selected folder fromleft
-export default function Middle({ folderId, onSelectNote }: Middleprops) {
+// interface Middleprops {
+//   folderId: string;
+//   onSelectNote: (id: string) => void;
+// }
+
+// fetching note from selected folder fromleft
+export default function Middle() {
+  const { folderId } = useParams();
+  const navigate = useNavigate();
   const [notes, setNotes] = useState<Note[]>([]);
+  const [folderName, setFolderName] = useState("");
+
+  // fetching notes when folder chnages
   useEffect(() => {
     console.log("Selected folderId", folderId);
     if (!folderId) {
@@ -28,6 +35,29 @@ export default function Middle({ folderId, onSelectNote }: Middleprops) {
     loadNotes();
   }, [folderId]);
 
+  // to show folderName as heading in middleportion
+  useEffect(() => {
+    if (!folderId) {
+      setFolderName("");
+      return;
+    }
+
+    async function loadFolderName() {
+      try {
+        const response = await api.get("/folders");
+        const folders = response.data.folders;
+
+        const selectedFolder = folders.find((folder) => folder.id === folderId);
+
+        setFolderName(selectedFolder?.name || "");
+      } catch (error) {
+        console.log("error in fetching folder name :", error);
+      }
+    }
+
+    loadFolderName();
+  }, [folderId]);
+
   return (
     <div
       className="
@@ -40,12 +70,12 @@ export default function Middle({ folderId, onSelectNote }: Middleprops) {
   
       "
     >
-      <h2 className="text-2xl font-semibold">Personal</h2>
+      <h2 className="text-2xl font-semibold">{folderName || "Notes"}</h2>
       {notes.map((note) => (
         <div
           key={note.id}
           className="flex flex-col gap-3"
-          onClick={() => onSelectNote(note.id)}
+          onClick={() => navigate(`/folder/${folderId}/note/${note.id}`)}
         >
           <Card
             title={note.title}
