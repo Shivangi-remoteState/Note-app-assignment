@@ -33,3 +33,15 @@
   --text-body: 14px;
   --toolbar-icon-size: 20px;
 }
+
+@layer utilities {
+  .w-left {
+    width: 20%;
+  }
+  .w-middle {
+    width: 25%;
+  }
+  .w-right {
+    width: 55%;
+  }
+}

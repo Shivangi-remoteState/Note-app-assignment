@@ -48,7 +48,7 @@ export default function Right({isNewNote =false}:RightProps) {
       const res = await api.post("/notes", {
         title,
         content,
-        folderId, // auto-selected folder
+        folderId,
       });
 
       const newNoteId = res.data.note.id;
@@ -110,7 +110,7 @@ export default function Right({isNewNote =false}:RightProps) {
       "
     >
       <div className="flex  justify-between pb-8 relative">
-         {/* TITLE */}
+         {/* title */}
       {editTitle ? (
         <input
           className="text-3xl font-bold bg-transparent border-b outline-none"
@@ -183,7 +183,7 @@ export default function Right({isNewNote =false}:RightProps) {
           </p>
         )}
       </div>
-      {/* SAVE BUTTONS */}
+      {/* auto save here (modify)*/}
       {isNewNote ? (
         <button
           onClick={handleSaveNewNote}

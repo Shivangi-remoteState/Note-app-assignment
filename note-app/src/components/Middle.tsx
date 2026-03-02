@@ -63,9 +63,8 @@ export default function Middle() {
   }, [folderId]);
 
   return (
-    <div className="h-screen w-middle p-4 border-r border-border flex flex-col gap-5 font-name">
+<div className="h-screen w-middle p-4 border-r border-border flex flex-col gap-5 font-name">
       <h2 className="text-2xl font-semibold">{folderName}</h2>
-
       {notes.map((note) => (
         <div
           key={note.id}

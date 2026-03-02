@@ -4,6 +4,7 @@ import Right from "../components/Right";
 import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { api } from "../api/axios";
+import EmptyNote from "@/components/EmptyNote";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -36,28 +37,27 @@ const Home = () => {
 
       {foldersLoaded && (
         <Routes>
-          <Route path="folder/:folderId" element={<Middle />} />
+  <Route path="folder/:folderId" element={
+    <div className="flex">
+      <Middle />
+      <EmptyNote />   
+    </div>
+  } />
 
-          <Route
-            path="folder/:folderId/note/:noteId"
-            element={
-              <div className="flex">
-                <Middle />
-                <Right />
-              </div>
-            }
-          />
+  <Route path="folder/:folderId/note/:noteId" element={
+    <div className="flex w-full">
+      <Middle />
+      <Right />
+    </div>
+  } />
 
-          <Route
-            path="folder/:folderId/new"
-            element={
-              <div className="flex">
-                <Middle />
-                <Right isNewNote />
-              </div>
-            }
-          />
-        </Routes>
+  <Route path="folder/:folderId/new" element={
+    <div className="flex w-full">
+      <Middle />
+      <Right isNewNote />
+    </div>
+  } />
+</Routes>
       )}
     </div>
   );

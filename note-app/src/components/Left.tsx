@@ -32,8 +32,6 @@ export default function Left() {
         const allFolders = response.data.folders;
 
         setFolders(allFolders);
-
-        // Auto-select first folder if none selected
         if (allFolders.length > 0 && !currentFolderId) {
           navigate(`/folder/${allFolders[0].id}`);
         }
@@ -66,7 +64,7 @@ export default function Left() {
   }
 
   return (
-    <div className="w-sidebar h-screen px-4 py-5 flex flex-col gap-gap">
+    <div className="w-left h-screen px-4 py-5 flex flex-col gap-gap">
       <div className="flex items-center justify-between">
         <div className="flex items-center">
           <img src="/images/Nowted.svg" className="w-20" />
@@ -78,7 +76,7 @@ export default function Left() {
         </button>
       </div>
 
-      {/* NEW NOTE BUTTON */}
+      {/* new note button */}
       <div
         className="flex justify-center bg-card gap-2 rounded-sm p-2 cursor-pointer hover:opacity-90"
         onClick={() => {
@@ -93,7 +91,7 @@ export default function Left() {
         <div className="font-name">New Note</div>
       </div>
 
-      {/* RECENTS */}
+      {/* recents */}
       <div className="flex flex-col gap-2">
         <div className="text-sm py-1 px-2 font-name">Recents</div>
 
@@ -113,7 +111,7 @@ export default function Left() {
         </div>
       </div>
 
-      {/* FOLDERS */}
+      {/* folders */}
       <div className="flex flex-col gap-2 py-1 px-2">
         <div className="flex items-center justify-between">
           <div className="text-sm font-semibold">Folders</div>
@@ -159,7 +157,7 @@ export default function Left() {
         </div>
       </div>
 
-      {/* MORE SECTION */}
+      {/* more */}
       <div className="flex flex-col gap-2">
         <div className="px-2 text-sm text-gray-300">More</div>
 
