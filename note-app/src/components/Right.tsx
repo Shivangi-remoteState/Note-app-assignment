@@ -16,11 +16,15 @@ export default function Right({ isNewNote = false }: RightProps) {
 
   const [note, setNote] = useState<Note | null>(null);
 
-  const [title, setTitle] = useState("Untitled Note");
-  const [content, setContent] = useState("Start writing...");
+  const [title, setTitle] = useState("Write title here");
+  const [content, setContent] = useState("");
 
   const [editTitle, setEditTitle] = useState(isNewNote);
   const [editContent, setEditContent] = useState(isNewNote);
+
+  const [isFavorite, setIsFavorite] = useState(false);
+
+  // fetching notes
   useEffect(() => {
     // not fetch note when creating
     if (isNewNote) return;
@@ -36,19 +40,21 @@ export default function Right({ isNewNote = false }: RightProps) {
         setNote(fullNote);
         setTitle(fullNote.title);
         setContent(fullNote.content || "");
+        setIsFavorite(fullNote.isFavorite);
       } catch (error) {
         console.log("error in loading notes:", error);
       }
     }
     loadNote();
   }, [noteId, isNewNote]);
+
   // save note
   async function handleSaveNewNote() {
     try {
       const res = await api.post("/notes", {
         title,
         content,
-        folderId, // auto-selected folder
+        folderId,
       });
 
       const newNoteId = res.data.note.id;
@@ -74,6 +80,7 @@ export default function Right({ isNewNote = false }: RightProps) {
       console.log("Error in updating note:", error);
     }
   }
+
   // formating date
   function formatDate(dateString: string) {
     const date = new Date(dateString);
@@ -82,6 +89,25 @@ export default function Right({ isNewNote = false }: RightProps) {
     const year = date.getFullYear();
 
     return `${day}/${month}/${year}`;
+  }
+
+  //  favourite
+  async function toggleFavorite() {
+    try {
+      const updatedValue = !isFavorite;
+
+      await api.patch(`/notes/${noteId}`, {
+        isFavorite: updatedValue,
+      });
+
+      setIsFavorite(updatedValue);
+
+      setNote((prev) => (prev ? { ...prev, isFavorite: updatedValue } : prev));
+
+      window.dispatchEvent(new Event("notesUpdated"));
+    } catch (error) {
+      console.log("Error in updating favorite:", error);
+    }
   }
 
   if (!note && !isNewNote) {
@@ -120,19 +146,26 @@ export default function Right({ isNewNote = false }: RightProps) {
             onChange={(e) => setTitle(e.target.value)}
           />
         ) : (
-          <h1
-            className="text-3xl font-semibold cursor-pointer"
-            onDoubleClick={() => setEditTitle(true)}
-          >
-            {title}
-          </h1>
+          <div className="flex items-center gap-2">
+            <h1
+              className="text-3xl font-semibold cursor-pointer"
+              onDoubleClick={() => setEditTitle(true)}
+            >
+              {title}
+            </h1>
+
+            {/* Star Icon */}
+            {isFavorite && <span className="text-yellow-400">★</span>}
+          </div>
         )}
 
         <button onClick={() => setMenuOpen(!menuOpen)}>
           <img src="/images/Frame 1.svg" alt="menu icon" />
         </button>
 
-        {menuOpen && <NoteMenu />}
+        {menuOpen && (
+          <NoteMenu isFavorite={isFavorite} toggleFavorite={toggleFavorite} />
+        )}
       </div>
 
       <div className="flex flex-col gap-4">

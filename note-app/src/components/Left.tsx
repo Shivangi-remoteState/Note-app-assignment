@@ -1,18 +1,16 @@
 import { useEffect, useState } from "react";
 import { api } from "../api/axios";
-import type { Folder } from "../types/api";
+import type { Folder, RecentNote } from "../types/api";
 import { useNavigate, useParams } from "react-router-dom";
 
 import {
-  Archive,
   FileText,
   Folder as FolderIcon,
   FolderPlus,
   Plus,
   Search,
-  Star,
-  Trash,
 } from "lucide-react";
+import MoreSection from "./MoreSection";
 
 export default function Left() {
   const [folders, setFolders] = useState<Folder[]>([]);
@@ -44,9 +42,30 @@ export default function Left() {
     fetchFolder();
   }, []);
 
+  // fetching recent folder
+  const [recentNotes, setRecentNotes] = useState<RecentNote[]>([]);
+  useEffect(() => {
+    async function fetchRecentNotes() {
+      try {
+        const response = await api.get("/notes/recent");
+        const recent = response.data.recentNotes || [];
+        const topThree = recent.slice(0, 3);
+        setRecentNotes(topThree);
+      } catch (error) {
+        console.log("Error in fetching recent notes:", error);
+      }
+    }
+
+    fetchRecentNotes();
+  }, []);
+
   // auto-select first folder
   useEffect(() => {
-    if (folders.length > 0 && !currentFolderId) {
+    if (
+      folders.length > 0 &&
+      !currentFolderId &&
+      window.location.pathname !== "/favorites"
+    ) {
       navigate(`/folder/${folders[0].id}`, { replace: true });
     }
   }, [folders, currentFolderId, navigate]);
@@ -111,25 +130,26 @@ export default function Left() {
       {/* recent */}
       <div className="flex flex-col gap-2">
         <div className="text-sm py-1 px-2 font-name">Recents</div>
+
         <div className="flex flex-col gap-1">
-          <div className="flex gap-2 items-center font-name py-1 px-2 hover:bg-hoverFile rounded">
-            <div>
-              <FileText size={20} />
+          {recentNotes.length === 0 && (
+            <div className="text-xs px-2 text-gray-400">
+              No recent notes available
             </div>
-            <div className="text-sm">Reflection on the Month</div>
-          </div>
-          <div className="flex gap-2 items-center font-name py-1 px-2  hover:bg-hoverFile rounded">
-            <div>
+          )}
+
+          {recentNotes.map((note) => (
+            <div
+              key={note.id}
+              className="flex gap-2 items-center font-name py-1 px-2 hover:bg-hoverFile rounded cursor-pointer"
+              onClick={() =>
+                navigate(`/folder/${note.folderId}/note/${note.id}`)
+              }
+            >
               <FileText size={20} />
+              <div className="text-sm">{note.title || "Untitled"}</div>
             </div>
-            <div>Project proposal</div>
-          </div>
-          <div className="flex gap-2 items-center font-name py-1 px-2  hover:bg-hoverFile rounded">
-            <div>
-              <FileText size={20} />
-            </div>
-            <div>Travel intinerary</div>
-          </div>
+          ))}
         </div>
       </div>
 
@@ -203,30 +223,7 @@ export default function Left() {
       </div>
       {/* more section*/}
       <div className="flex flex-col gap-2">
-        <div className="text-sm px-2 text-gray-300">More</div>
-
-        <div className="flex flex-col gap-1">
-          <div className="flex items-center gap-3 px-2 py-1 hover:bg-hoverFile rounded cursor-pointer">
-            <span className="text-base">
-              <Star size={16} />
-            </span>
-            <div className="text-sm">Favorites</div>
-          </div>
-
-          <div className="flex items-center gap-3 px-2 py-1 hover:bg-hoverFile rounded cursor-pointer">
-            <span className="text-base">
-              <Trash size={16} />
-            </span>
-            <div className="text-sm">Trash</div>
-          </div>
-
-          <div className="flex items-center gap-3 px-2 py-1 hover:bg-hoverFile rounded cursor-pointer">
-            <span className="text-base">
-              <Archive size={16} />
-            </span>
-            <div className="text-sm">Archived Notes</div>
-          </div>
-        </div>
+        <MoreSection />
       </div>
     </div>
   );

@@ -4,13 +4,8 @@ import type { Note } from "../types/api";
 import Card from "./Card";
 import { useNavigate, useParams } from "react-router-dom";
 
-// interface Middleprops {
-//   folderId: string;
-//   onSelectNote: (id: string) => void;
-// }
-
 // fetchingnote from selected folder fromleft
-export default function Middle() {
+export default function Middle({ isFavoritesPage = false }) {
   const { folderId } = useParams();
   const navigate = useNavigate();
   const [notes, setNotes] = useState<Note[]>([]);
@@ -18,13 +13,22 @@ export default function Middle() {
 
   // fetching notes when folder chnages
   useEffect(() => {
-    console.log("Selected folderId", folderId);
-    if (!folderId) {
-      setNotes([]);
-      return;
-    }
     async function loadNotes() {
       try {
+        // favourite
+        if (isFavoritesPage) {
+          const response = await api.get(
+            "/notes?archived=false&favorite=true&deleted=false&limit=100",
+          );
+          const favData = response.data.notes;
+          setNotes(favData);
+          setFolderName("Favourites");
+          return;
+        }
+        if (!folderId) {
+          setNotes([]);
+          return;
+        }
         const response = await api.get(`/notes?folderId=${folderId}`);
         const noteData = response.data.notes;
         setNotes(noteData);
@@ -33,10 +37,15 @@ export default function Middle() {
       }
     }
     loadNotes();
-  }, [folderId]);
+  }, [folderId, isFavoritesPage]);
 
   // to show folderName as heading in middleportion
   useEffect(() => {
+    if (isFavoritesPage) {
+      console.log("isFavoritesPage =", isFavoritesPage);
+      setFolderName("Favorites");
+      return;
+    }
     if (!folderId) {
       setFolderName("");
       return;
@@ -56,7 +65,7 @@ export default function Middle() {
     }
 
     loadFolderName();
-  }, [folderId]);
+  }, [folderId, isFavoritesPage]);
 
   return (
     <div
@@ -75,7 +84,7 @@ export default function Middle() {
         <div
           key={note.id}
           className="flex flex-col gap-3"
-          onClick={() => navigate(`/folder/${folderId}/note/${note.id}`)}
+          onClick={() => navigate(`/folder/${note.folderId}/note/${note.id}`)}
         >
           <Card
             title={note.title}

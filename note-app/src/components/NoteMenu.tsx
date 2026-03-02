@@ -1,6 +1,5 @@
-
 import { Star, Archive, Trash2 } from "lucide-react";
-const NoteMenu = () => {
+const NoteMenu = ({ isFavorite, toggleFavorite }) => {
   return (
     <div
       className="
@@ -11,19 +10,25 @@ const NoteMenu = () => {
         z-50
       "
     >
-      <div className="border-b border-white/20 pb-2"><button className="flex items-center gap-3 px-3 py-2 ">
-        <Star size={16} /> Add to Favourites
-      </button>
+      <div className="border-b border-white/20 pb-2">
+        <button
+          onClick={toggleFavorite}
+          className="flex items-center gap-3 px-3 py-2 hover:bg-white/10 rounded"
+        >
+          <Star size={16} className={isFavorite ? "text-yellow-400" : ""} />
+          {isFavorite ? "Remove from Favourites" : "Add to Favourites"}
+        </button>
 
-      <button className="flex items-center gap-3 px-3 py-2 ">
-        <Archive size={16} /> Archived
-      </button></div>
+        <button className="flex items-center gap-3 px-3 py-2 ">
+          <Archive size={16} /> Archived
+        </button>
+      </div>
 
       <button className="flex items-center gap-3 px-3 py-2  ">
         <Trash2 size={16} /> Delete
       </button>
     </div>
-  )
-}
+  );
+};
 
-export default NoteMenu
+export default NoteMenu;

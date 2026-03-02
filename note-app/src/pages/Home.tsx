@@ -18,7 +18,16 @@ const Home = () => {
             </>
           }
         />
-
+        <Route
+          path="/favorites"
+          element={
+            <>
+              <Left />
+              <Middle isFavoritesPage={true} />
+              <EmptyNote /> {/* EmptyNote will load because no noteId */}
+            </>
+          }
+        />
         <Route
           path="folder/:folderId/*"
           element={
