@@ -3,14 +3,14 @@ import { api } from "../api/axios";
 import type { Note } from "../types/api";
 import NoteMenu from "./NoteMenu";
 import { CalendarDays, Folder } from "lucide-react";
-import { useParams,useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 
 interface RightProps {
-  isNewNote?:boolean;
+  isNewNote?: boolean;
 }
 
-export default function Right({isNewNote =false}:RightProps) {
-  const { noteId , folderId} = useParams();
+export default function Right({ isNewNote = false }: RightProps) {
+  const { noteId, folderId } = useParams();
   const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
 
@@ -23,7 +23,7 @@ export default function Right({isNewNote =false}:RightProps) {
   const [editContent, setEditContent] = useState(isNewNote);
   useEffect(() => {
     // not fetch note when creating
-    if(isNewNote) return;
+    if (isNewNote) return;
     if (!noteId) {
       setNote(null);
       return;
@@ -35,20 +35,20 @@ export default function Right({isNewNote =false}:RightProps) {
         const fullNote = response.data.note;
         setNote(fullNote);
         setTitle(fullNote.title);
-        setContent(fullNote.content || "")
+        setContent(fullNote.content || "");
       } catch (error) {
         console.log("error in loading notes:", error);
       }
     }
     loadNote();
-  }, [noteId , isNewNote]);
+  }, [noteId, isNewNote]);
   // save note
-    async function handleSaveNewNote() {
+  async function handleSaveNewNote() {
     try {
       const res = await api.post("/notes", {
         title,
         content,
-        folderId,
+        folderId, // auto-selected folder
       });
 
       const newNoteId = res.data.note.id;
@@ -64,7 +64,7 @@ export default function Right({isNewNote =false}:RightProps) {
       await api.patch(`/notes/${noteId}`, {
         title,
         content,
-         updatedAt: new Date().toISOString(),    
+        updatedAt: new Date().toISOString(),
       });
 
       alert("Note updated!");
@@ -96,7 +96,7 @@ export default function Right({isNewNote =false}:RightProps) {
       </div>
     );
   }
-  
+
   return (
     <div
       className="
@@ -110,23 +110,23 @@ export default function Right({isNewNote =false}:RightProps) {
       "
     >
       <div className="flex  justify-between pb-8 relative">
-         {/* title */}
-      {editTitle ? (
-        <input
-          className="text-3xl font-bold bg-transparent border-b outline-none"
-          value={title}
-          autoFocus
-          onBlur={() => setEditTitle(false)}
-          onChange={(e) => setTitle(e.target.value)}
-        />
-      ) : (
-        <h1
-          className="text-3xl font-semibold cursor-pointer"
-          onDoubleClick={() => setEditTitle(true)}
-        >
-          {title}
-        </h1>
-      )}
+        {/* TITLE */}
+        {editTitle ? (
+          <input
+            className="text-3xl font-bold bg-transparent border-b outline-none"
+            value={title}
+            autoFocus
+            onBlur={() => setEditTitle(false)}
+            onChange={(e) => setTitle(e.target.value)}
+          />
+        ) : (
+          <h1
+            className="text-3xl font-semibold cursor-pointer"
+            onDoubleClick={() => setEditTitle(true)}
+          >
+            {title}
+          </h1>
+        )}
 
         <button onClick={() => setMenuOpen(!menuOpen)}>
           <img src="/images/Frame 1.svg" alt="menu icon" />
@@ -144,13 +144,13 @@ export default function Right({isNewNote =false}:RightProps) {
             <span className="text-sm opacity-70">Date</span>
           </div>
           <span className="text-sm font-medium">
-             <span className="font-medium">
-          {isNewNote
-            ? new Date().toDateString()
-            : note
-            ? formatDate(note.createdAt)
-            : ""}
-        </span>
+            <span className="font-medium">
+              {isNewNote
+                ? new Date().toDateString()
+                : note
+                  ? formatDate(note.createdAt)
+                  : ""}
+            </span>
           </span>
         </div>
 
@@ -161,12 +161,14 @@ export default function Right({isNewNote =false}:RightProps) {
             </span>
             <span className="text-sm opacity-70">Folder</span>
           </div>
-          <span className="text-sm font-medium">{note?.folder?.name || "Selected Folder"}</span>
+          <span className="text-sm font-medium">
+            {note?.folder?.name || "Selected Folder"}
+          </span>
         </div>
       </div>
 
       <div className="text-sm py-8">
-         {editContent ? (
+        {editContent ? (
           <textarea
             className="w-full h-[70vh] bg-transparent border p-3"
             value={content}
@@ -183,7 +185,7 @@ export default function Right({isNewNote =false}:RightProps) {
           </p>
         )}
       </div>
-      {/* auto save here (modify)*/}
+      {/* SAVE BUTTONS */}
       {isNewNote ? (
         <button
           onClick={handleSaveNewNote}

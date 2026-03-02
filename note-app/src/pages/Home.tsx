@@ -1,64 +1,67 @@
 import Left from "../components/Left";
 import Middle from "../components/Middle";
 import Right from "../components/Right";
-import { Routes, Route, useNavigate, useLocation } from "react-router-dom";
-import { useEffect, useState } from "react";
-import { api } from "../api/axios";
-import EmptyNote from "@/components/EmptyNote";
+import EmptyNote from "../components/EmptyNote";
+import { Routes, Route } from "react-router-dom";
 
 const Home = () => {
-  const navigate = useNavigate();
-  const location = useLocation();
-
-  const [foldersLoaded, setFoldersLoaded] = useState(false);
-
-  useEffect(() => {
-    async function redirectToFirstFolder() {
-      try {
-        const res = await api.get("/folders");
-        const allFolders = res.data.folders;
-
-        if (allFolders.length > 0 && location.pathname === "/") {
-          navigate(`/folder/${allFolders[0].id}`);
-        }
-      } catch (error) {
-        console.log("Error fetching folders:", error);
-      } finally {
-        setFoldersLoaded(true);
-      }
-    }
-
-    redirectToFirstFolder();
-  }, []);
-
   return (
     <div className="flex bg-black text-white h-screen w-full">
-      <Left />
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <>
+              <Left />
+              <Middle />
+              <EmptyNote />
+            </>
+          }
+        />
 
-      {foldersLoaded && (
-        <Routes>
-  <Route path="folder/:folderId" element={
-    <div className="flex">
-      <Middle />
-      <EmptyNote />   
-    </div>
-  } />
+        <Route
+          path="folder/:folderId/*"
+          element={
+            <>
+              <Left />
+              <Routes>
+                {/* folder open then middle + right*/}
+                <Route
+                  path=""
+                  element={
+                    <>
+                      <Middle />
+                      <EmptyNote />
+                    </>
+                  }
+                />
 
-  <Route path="folder/:folderId/note/:noteId" element={
-    <div className="flex w-full">
-      <Middle />
-      <Right />
-    </div>
-  } />
+                {/* note open then middle+ right*/}
+                <Route
+                  path="note/:noteId"
+                  element={
+                    <>
+                      <Middle />
+                      <Right />
+                    </>
+                  }
+                />
 
-  <Route path="folder/:folderId/new" element={
-    <div className="flex w-full">
-      <Middle />
-      <Right isNewNote />
-    </div>
-  } />
-</Routes>
-      )}
+                {/* newnote then middle + right */}
+                <Route
+                  path="new"
+                  element={
+                    <>
+                      <Middle />
+                      <Right isNewNote={true} />
+                    </>
+                  }
+                />
+              </Routes>
+            </>
+          }
+        />
+      </Routes>
     </div>
   );
 };
