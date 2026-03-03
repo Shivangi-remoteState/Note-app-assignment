@@ -24,7 +24,7 @@ const Home = () => {
             <>
               <Left />
               <Middle isFavoritesPage={true} />
-              <EmptyNote /> {/* EmptyNote will load because no noteId */}
+              <EmptyNote />
             </>
           }
         />
@@ -38,6 +38,28 @@ const Home = () => {
             </>
           }
         />
+        <Route
+          path="/trash/note/:noteId"
+          element={
+            <>
+              <Left />
+              <Middle isTrashPage={true} />
+              <Right isTrashMode={true} />
+            </>
+          }
+        />
+        {/* trash*/}
+        <Route
+          path="/trash"
+          element={
+            <>
+              <Left />
+              <Middle isTrashPage={true} />
+              <EmptyNote />
+            </>
+          }
+        />
+
         <Route
           path="folder/:folderId/*"
           element={

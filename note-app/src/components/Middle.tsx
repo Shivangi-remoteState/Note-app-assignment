@@ -8,6 +8,7 @@ import { useNavigate, useParams } from "react-router-dom";
 export default function Middle({
   isFavoritesPage = false,
   isArchivedPage = false,
+  isTrashPage = false,
 }) {
   const { folderId } = useParams();
   const navigate = useNavigate();
@@ -29,7 +30,7 @@ export default function Middle({
           return;
         }
         // archived
-        if (isArchivedPage) {
+        else if (isArchivedPage) {
           const response = await api.get(
             "/notes?archived=true&favorite=false&deleted=false&limit=100",
           );
@@ -38,6 +39,16 @@ export default function Middle({
           setFolderName("Archived Notes");
           return;
         }
+
+        // trash
+        else if (isTrashPage) {
+          const response = await api.get("/notes?deleted=true&limit=200");
+          const trashData = response.data.notes;
+          setNotes(trashData);
+          setFolderName("Trash");
+          return;
+        }
+
         if (!folderId) {
           setNotes([]);
           return;
@@ -50,7 +61,7 @@ export default function Middle({
       }
     }
     loadNotes();
-  }, [folderId, isFavoritesPage, isArchivedPage]);
+  }, [folderId, isFavoritesPage, isArchivedPage, isTrashPage]);
 
   // to show folderName as heading in middleportion
   useEffect(() => {
@@ -61,6 +72,10 @@ export default function Middle({
     if (isFavoritesPage) {
       // console.log("isFavoritesPage =", isFavoritesPage);
       setFolderName("Favorites");
+      return;
+    }
+    if (isTrashPage) {
+      setFolderName("Trash");
       return;
     }
 
@@ -83,7 +98,7 @@ export default function Middle({
     }
 
     loadFolderName();
-  }, [folderId, isFavoritesPage, isArchivedPage]);
+  }, [folderId, isFavoritesPage, isArchivedPage, isTrashPage]);
 
   return (
     <div
@@ -102,7 +117,13 @@ export default function Middle({
         <div
           key={note.id}
           className="flex flex-col gap-3 "
-          onClick={() => navigate(`/folder/${note.folderId}/note/${note.id}`)}
+          onClick={() => {
+            if (isTrashPage) {
+              navigate(`/trash/note/${note.id}`);
+            } else {
+              navigate(`/folder/${note.folderId}/note/${note.id}`);
+            }
+          }}
         >
           <Card
             title={note.title}

@@ -62,15 +62,21 @@ export default function Left() {
   // auto-select first folder
   useEffect(() => {
     const path = window.location.pathname;
-    if (
-      folders.length > 0 &&
-      !currentFolderId &&
-      path !== "/favorites" &&
-      path !== "/archived"
-    ) {
+
+    // Only redirect if exact path === "/"
+    if (path === "/" && folders.length > 0) {
       navigate(`/folder/${folders[0].id}`, { replace: true });
     }
-  }, [folders, currentFolderId, navigate]);
+    // if (
+    //   folders.length > 0 &&
+    //   !currentFolderId &&
+    //   path !== "/favorites" &&
+    //   path !== "/archived" &&
+    //   path !== "/trash"
+    // ) {
+    //   navigate(`/folder/${folders[0].id}`, { replace: true });
+    // }
+  }, [folders, navigate]);
 
   // add folder when click on save button
   async function handleCreateFolder() {
@@ -89,7 +95,21 @@ export default function Left() {
       setLoading(false);
     }
   }
+  // delete folder
+  async function deleteFolder(folderId: string) {
+    try {
+      await api.delete(`/folders/${folderId}`);
+      alert("Folder moved to Trash");
 
+      // refresh folder list
+      const res = await api.get("/folders");
+      setFolders(res.data.folders);
+
+      navigate("/trash"); // go to Trash page
+    } catch (error) {
+      console.log("Error deleting folder:", error);
+    }
+  }
   return (
     <div
       className="
@@ -200,7 +220,13 @@ export default function Left() {
                   {folder?.name || "Untitled"}
                 </div>
               </div>
-              <span>
+              <span
+                onClick={(e) => {
+                  e.stopPropagation();
+                  deleteFolder(folder.id);
+                }}
+                className="curser-pointer hover:text-red-600"
+              >
                 <Trash2 size={18} />
               </span>
             </div>

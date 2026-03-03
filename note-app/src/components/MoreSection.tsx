@@ -18,7 +18,10 @@ const MoreSection = () => {
           <div className="text-sm">Favorites</div>
         </div>
 
-        <div className="flex items-center gap-3 px-2 py-1 hover:bg-hoverFile rounded cursor-pointer">
+        <div
+          className="flex items-center gap-3 px-2 py-1 hover:bg-hoverFile rounded cursor-pointer"
+          onClick={() => navigate("/trash")}
+        >
           <span className="text-base">
             <Trash size={16} />
           </span>

@@ -4,12 +4,17 @@ import type { Note } from "../types/api";
 import NoteMenu from "./NoteMenu";
 import { CalendarDays, Folder } from "lucide-react";
 import { useParams, useNavigate } from "react-router-dom";
+import Restore from "./Restore";
 
 interface RightProps {
   isNewNote?: boolean;
+  isTrashMode?: boolean;
 }
 
-export default function Right({ isNewNote = false }: RightProps) {
+export default function Right({
+  isNewNote = false,
+  isTrashMode = false,
+}: RightProps) {
   const { noteId, folderId } = useParams();
   const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
@@ -39,6 +44,7 @@ export default function Right({ isNewNote = false }: RightProps) {
         const response = await api.get(`/notes/${noteId}`);
         // console.log(response);
         const fullNote = response.data.note;
+        console.log("Loaded note:", fullNote);
         setNote(fullNote);
         setTitle(fullNote.title);
         setContent(fullNote.content || "");
@@ -128,20 +134,22 @@ export default function Right({ isNewNote = false }: RightProps) {
       console.log("Error in updating archived: ", err);
     }
   }
-
-  // if (!note && !isNewNote) {
-  //   return (
-  //     <div className="h-screen w-right flex items-center justify-center text-center text-white/60">
-  //       <div>
-  //         <p className="text-lg font-medium">Select a note to view</p>
-  //         <p className="text-sm opacity-70">
-  //           Choose a note from the list to see its contents.
-  //         </p>
-  //       </div>
-  //     </div>
-  //   );
-  // }
-
+  // delete
+  async function handleDelete() {
+    try {
+      await api.delete(`/notes/${noteId}`);
+      alert("Note deleted and move to trash");
+      // referesh the middle.tsx
+      window.dispatchEvent(new Event("notesUpdated"));
+      navigate(`/trash/note/${noteId}`);
+    } catch (error) {
+      console.log("Error in deleting note:", error);
+    }
+  }
+  // restore ui
+  if (isTrashMode) {
+    return <Restore noteTitle={note?.title || ""} noteId={noteId} />;
+  }
   return (
     <div
       className="
@@ -188,6 +196,7 @@ export default function Right({ isNewNote = false }: RightProps) {
             toggleFavorite={toggleFavorite}
             isArchived={isArchived}
             toggleArchive={toggleArchived}
+            handleDelete={handleDelete}
           />
         )}
       </div>

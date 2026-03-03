@@ -1,28 +1,37 @@
+import { api } from "@/api/axios";
 import { RotateCcw } from "lucide-react";
-const Restore = () => {
+import { useNavigate } from "react-router-dom";
+
+const Restore = ({ noteTitle, noteId }) => {
+  const navigate = useNavigate();
+  async function handleRestore() {
+    try {
+      await api.post(`/notes/${noteId}/restore`);
+      alert("Note restored");
+      navigate("/");
+    } catch (error) {
+      console.log("Error in restoring notes:", error);
+    }
+  }
   return (
-    <div className="min-h-screen bg-[#111111] flex items-center justify-center px-4">
-      <div className="text-center max-w-md">
-        <div className="flex justify-center mb-6">
-          <div className="w-16 h-16 rounded-full border border-gray-600 flex items-center justify-center">
-            <RotateCcw className="w-8 h-8 text-gray-300" strokeWidth={1.5} />
-          </div>
-        </div>
-
-        <h1 className="text-xl md:text-2xl font-semibold text-white mb-3">
-          Restore “Reflection on the Month of June”
-        </h1>
-
-        <p className="text-gray-400 text-sm mb-6 leading-relaxed">
-          Don’t want to lose this note? It’s not too late! Just click the
-          “Restore” button and it will be added back to your list. It’s that
-          simple.
-        </p>
-
-        <button className="bg-indigo-600 hover:bg-indigo-500 text-white px-6 py-2 rounded-md transition duration-200">
-          Restore
-        </button>
+    <div className="flex flex-col justify-center items-center h-full w-right gap-2">
+      <div>
+        <RotateCcw className="w-16 h-16 text-gray-300" strokeWidth={0.5} />
       </div>
+      <h1 className="text-xl  font-semibold text-white font-name text-restore">
+        Restore “{noteTitle}”
+      </h1>
+      <p className="text-white/60 text-base font-name max-w-md text-center ">
+        Don’t want to lose this note? It’s not too late! Just click the
+        “Restore” button and it will be added back to your list. It’s that
+        simple.
+      </p>
+      <button
+        onClick={handleRestore}
+        className="bg-indigo-600 hover:bg-indigo-500 text-white px-6 py-2 rounded-md transition duration-200"
+      >
+        Restore
+      </button>
     </div>
   );
 };

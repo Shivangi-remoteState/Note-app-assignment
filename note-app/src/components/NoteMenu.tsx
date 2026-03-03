@@ -4,6 +4,7 @@ const NoteMenu = ({
   toggleFavorite,
   isArchived,
   toggleArchive,
+  handleDelete,
 }) => {
   return (
     <div
@@ -33,7 +34,10 @@ const NoteMenu = ({
         </button>
       </div>
 
-      <button className="flex items-center gap-3 px-3 py-2  ">
+      <button
+        className="flex items-center gap-3 px-3 py-2  "
+        onClick={handleDelete}
+      >
         <Trash2 size={16} /> Delete
       </button>
     </div>
