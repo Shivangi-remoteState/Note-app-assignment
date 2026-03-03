@@ -25,7 +25,10 @@ const MoreSection = () => {
           <div className="text-sm">Trash</div>
         </div>
 
-        <div className="flex items-center gap-3 px-2 py-1 hover:bg-hoverFile rounded cursor-pointer">
+        <div
+          className="flex items-center gap-3 px-2 py-1 hover:bg-hoverFile rounded cursor-pointer"
+          onClick={() => navigate("/archived")}
+        >
           <span className="text-base">
             <Archive size={16} />
           </span>

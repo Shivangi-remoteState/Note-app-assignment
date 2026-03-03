@@ -1,5 +1,10 @@
 import { Star, Archive, Trash2 } from "lucide-react";
-const NoteMenu = ({ isFavorite, toggleFavorite }) => {
+const NoteMenu = ({
+  isFavorite,
+  toggleFavorite,
+  isArchived,
+  toggleArchive,
+}) => {
   return (
     <div
       className="
@@ -19,8 +24,12 @@ const NoteMenu = ({ isFavorite, toggleFavorite }) => {
           {isFavorite ? "Remove from Favourites" : "Add to Favourites"}
         </button>
 
-        <button className="flex items-center gap-3 px-3 py-2 ">
-          <Archive size={16} /> Archived
+        <button
+          onClick={toggleArchive}
+          className="flex items-center gap-3 px-3 py-2 "
+        >
+          <Archive size={16} />{" "}
+          {isArchived ? "Remove from Archive" : "Archived"}
         </button>
       </div>
 

@@ -5,7 +5,10 @@ import Card from "./Card";
 import { useNavigate, useParams } from "react-router-dom";
 
 // fetchingnote from selected folder fromleft
-export default function Middle({ isFavoritesPage = false }) {
+export default function Middle({
+  isFavoritesPage = false,
+  isArchivedPage = false,
+}) {
   const { folderId } = useParams();
   const navigate = useNavigate();
   const [notes, setNotes] = useState<Note[]>([]);
@@ -25,6 +28,16 @@ export default function Middle({ isFavoritesPage = false }) {
           setFolderName("Favourites");
           return;
         }
+        // archived
+        if (isArchivedPage) {
+          const response = await api.get(
+            "/notes?archived=true&favorite=false&deleted=false&limit=100",
+          );
+          const archiveData = response.data.notes;
+          setNotes(archiveData);
+          setFolderName("Archived Notes");
+          return;
+        }
         if (!folderId) {
           setNotes([]);
           return;
@@ -37,15 +50,20 @@ export default function Middle({ isFavoritesPage = false }) {
       }
     }
     loadNotes();
-  }, [folderId, isFavoritesPage]);
+  }, [folderId, isFavoritesPage, isArchivedPage]);
 
   // to show folderName as heading in middleportion
   useEffect(() => {
+    if (isArchivedPage) {
+      setFolderName("Archived Notes");
+      return;
+    }
     if (isFavoritesPage) {
-      console.log("isFavoritesPage =", isFavoritesPage);
+      // console.log("isFavoritesPage =", isFavoritesPage);
       setFolderName("Favorites");
       return;
     }
+
     if (!folderId) {
       setFolderName("");
       return;
@@ -65,7 +83,7 @@ export default function Middle({ isFavoritesPage = false }) {
     }
 
     loadFolderName();
-  }, [folderId, isFavoritesPage]);
+  }, [folderId, isFavoritesPage, isArchivedPage]);
 
   return (
     <div
@@ -76,14 +94,14 @@ export default function Middle({ isFavoritesPage = false }) {
         border-r border-border
         flex flex-col gap-5
         font-name
-  
+  overflow-y-auto
       "
     >
       <h2 className="text-2xl font-semibold">{folderName || "Notes"}</h2>
       {notes.map((note) => (
         <div
           key={note.id}
-          className="flex flex-col gap-3"
+          className="flex flex-col gap-3 "
           onClick={() => navigate(`/folder/${note.folderId}/note/${note.id}`)}
         >
           <Card

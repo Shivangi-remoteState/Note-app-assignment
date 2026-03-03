@@ -29,6 +29,16 @@ const Home = () => {
           }
         />
         <Route
+          path="/archived"
+          element={
+            <>
+              <Left />
+              <Middle isArchivedPage={true} />
+              <EmptyNote />
+            </>
+          }
+        />
+        <Route
           path="folder/:folderId/*"
           element={
             <>

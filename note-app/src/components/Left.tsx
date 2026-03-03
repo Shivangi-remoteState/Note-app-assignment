@@ -9,6 +9,7 @@ import {
   FolderPlus,
   Plus,
   Search,
+  Trash2,
 } from "lucide-react";
 import MoreSection from "./MoreSection";
 
@@ -30,7 +31,6 @@ export default function Left() {
       try {
         const response = await api.get("/folders");
         // console.log(response);
-
         const userFolder = response.data.folders;
         // console.log("Fetched folders:", userFolder);
         setFolders(userFolder);
@@ -61,10 +61,12 @@ export default function Left() {
 
   // auto-select first folder
   useEffect(() => {
+    const path = window.location.pathname;
     if (
       folders.length > 0 &&
       !currentFolderId &&
-      window.location.pathname !== "/favorites"
+      path !== "/favorites" &&
+      path !== "/archived"
     ) {
       navigate(`/folder/${folders[0].id}`, { replace: true });
     }
@@ -190,15 +192,21 @@ export default function Left() {
                   state: { folderName: folder.name },
                 });
               }}
-              className="flex items-center gap-3 px-2 py-1 hover:bg-hoverFile rounded cursor-pointer"
+              className="flex items-center justify-between gap-3 px-2 py-1 hover:bg-hoverFile rounded cursor-pointer"
             >
-              <FolderIcon size={18} />
-              <div className="text-sm hover:text-base">
-                {folder?.name || "Untitled"}
+              <div className="flex gap-3">
+                <FolderIcon size={18} />
+                <div className="text-sm hover:text-base">
+                  {folder?.name || "Untitled"}
+                </div>
               </div>
+              <span>
+                <Trash2 size={18} />
+              </span>
             </div>
           ))}
         </div>
+
         {/* <div className="flex flex-col gap-1">
           <div className="flex items-center gap-3">
             <span>

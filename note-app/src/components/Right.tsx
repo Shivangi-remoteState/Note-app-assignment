@@ -17,12 +17,14 @@ export default function Right({ isNewNote = false }: RightProps) {
   const [note, setNote] = useState<Note | null>(null);
 
   const [title, setTitle] = useState("Write title here");
-  const [content, setContent] = useState("");
+  const [content, setContent] = useState("Write your notes here");
 
   const [editTitle, setEditTitle] = useState(isNewNote);
   const [editContent, setEditContent] = useState(isNewNote);
 
   const [isFavorite, setIsFavorite] = useState(false);
+
+  const [isArchived, setIsArchived] = useState(false);
 
   // fetching notes
   useEffect(() => {
@@ -41,6 +43,7 @@ export default function Right({ isNewNote = false }: RightProps) {
         setTitle(fullNote.title);
         setContent(fullNote.content || "");
         setIsFavorite(fullNote.isFavorite);
+        setIsArchived(fullNote.isArchived);
       } catch (error) {
         console.log("error in loading notes:", error);
       }
@@ -51,13 +54,13 @@ export default function Right({ isNewNote = false }: RightProps) {
   // save note
   async function handleSaveNewNote() {
     try {
-      const res = await api.post("/notes", {
+      const response = await api.post("/notes", {
         title,
         content,
         folderId,
       });
-
-      const newNoteId = res.data.note.id;
+      alert("Note created");
+      const newNoteId = response.data.note.id;
 
       navigate(`/folder/${folderId}/note/${newNoteId}`);
     } catch (error) {
@@ -94,15 +97,15 @@ export default function Right({ isNewNote = false }: RightProps) {
   //  favourite
   async function toggleFavorite() {
     try {
-      const updatedValue = !isFavorite;
+      const valUpdated = !isFavorite;
 
       await api.patch(`/notes/${noteId}`, {
-        isFavorite: updatedValue,
+        isFavorite: valUpdated,
       });
 
-      setIsFavorite(updatedValue);
+      setIsFavorite(valUpdated);
 
-      setNote((prev) => (prev ? { ...prev, isFavorite: updatedValue } : prev));
+      setNote((prev) => (prev ? { ...prev, isFavorite: valUpdated } : prev));
 
       window.dispatchEvent(new Event("notesUpdated"));
     } catch (error) {
@@ -110,18 +113,34 @@ export default function Right({ isNewNote = false }: RightProps) {
     }
   }
 
-  if (!note && !isNewNote) {
-    return (
-      <div className="h-screen w-right flex items-center justify-center text-center text-white/60">
-        <div>
-          <p className="text-lg font-medium">Select a note to view</p>
-          <p className="text-sm opacity-70">
-            Choose a note from the list to see its contents.
-          </p>
-        </div>
-      </div>
-    );
+  // archived
+  async function toggleArchived() {
+    try {
+      const valUpdated = !isArchived;
+
+      await api.patch(`/notes/${noteId}`, {
+        isArchived: valUpdated,
+      });
+      setIsArchived(valUpdated);
+      setNote((prev) => (prev ? { ...prev, isArchived: valUpdated } : prev));
+      window.dispatchEvent(new Event("notesUpdate"));
+    } catch (err) {
+      console.log("Error in updating archived: ", err);
+    }
   }
+
+  // if (!note && !isNewNote) {
+  //   return (
+  //     <div className="h-screen w-right flex items-center justify-center text-center text-white/60">
+  //       <div>
+  //         <p className="text-lg font-medium">Select a note to view</p>
+  //         <p className="text-sm opacity-70">
+  //           Choose a note from the list to see its contents.
+  //         </p>
+  //       </div>
+  //     </div>
+  //   );
+  // }
 
   return (
     <div
@@ -164,7 +183,12 @@ export default function Right({ isNewNote = false }: RightProps) {
         </button>
 
         {menuOpen && (
-          <NoteMenu isFavorite={isFavorite} toggleFavorite={toggleFavorite} />
+          <NoteMenu
+            isFavorite={isFavorite}
+            toggleFavorite={toggleFavorite}
+            isArchived={isArchived}
+            toggleArchive={toggleArchived}
+          />
         )}
       </div>
 
