@@ -251,7 +251,7 @@ export default function Right({
           </p>
         )}
       </div>
-      {/* SAVE BUTTONS */}
+      {/* save btn */}
       {isNewNote ? (
         <button
           onClick={handleSaveNewNote}

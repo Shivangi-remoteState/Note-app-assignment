@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { api } from "../api/axios";
-import type { Note } from "../types/api";
+import type { Note, Folder } from "../types/api";
 import Card from "./Card";
 import { useNavigate, useParams } from "react-router-dom";
+import { useSearch } from "./SearchContext";
 
 // fetchingnote from selected folder fromleft
 export default function Middle({
@@ -12,6 +13,7 @@ export default function Middle({
 }) {
   const { folderId } = useParams();
   const navigate = useNavigate();
+  const { query } = useSearch();
   const [notes, setNotes] = useState<Note[]>([]);
   const [folderName, setFolderName] = useState("");
 
@@ -78,7 +80,6 @@ export default function Middle({
       setFolderName("Trash");
       return;
     }
-
     if (!folderId) {
       setFolderName("");
       return;
@@ -88,17 +89,97 @@ export default function Middle({
       try {
         const response = await api.get("/folders");
         const folders = response.data.folders;
-
         const selectedFolder = folders.find((folder) => folder.id === folderId);
-
         setFolderName(selectedFolder?.name || "");
       } catch (error) {
         console.log("error in fetching folder :", error);
       }
     }
-
     loadFolderName();
   }, [folderId, isFavoritesPage, isArchivedPage, isTrashPage]);
+
+  // search
+  const [allSearchNote, setAllSearchNotes] = useState<Note[]>([]);
+  const [allSearchFolders, setAllSearchFolders] = useState<Folder[]>([]);
+
+  useEffect(() => {
+    if (query.trim() === "") return;
+    async function loadSearchData() {
+      const responseFolder = await api.get("/folders");
+      setAllSearchFolders(responseFolder.data.folders);
+      const responseNote = await api.get("/notes?deleted=false&limit=500");
+      setAllSearchNotes(responseNote.data.notes);
+    }
+
+    loadSearchData();
+  }, [query]);
+  if (query.trim() !== "") {
+    const q = query.toLowerCase();
+
+    const matchingFolders = allSearchFolders.filter((f) =>
+      f.name.toLowerCase().includes(q),
+    );
+
+    const matchingNotes = allSearchNote.filter(
+      (n) =>
+        (n.title?.toLowerCase() || "").includes(q) ||
+        (n.content?.toLowerCase() || "").includes(q),
+    );
+
+    // if folder matches then  folder + notes is
+    if (matchingFolders.length > 0) {
+      return (
+        <div className="h-screen w-middle p-4 border-r overflow-y-auto font-name">
+          <h2 className="text-2xl font-semibold">Folders</h2>
+
+          {matchingFolders.map((folder) => (
+            <div key={folder.id} className="pt-5">
+              <h3 className="text-xl font-semibold mb-3">{folder.name}</h3>
+
+              {allSearchNote
+                .filter((note) => note.folderId === folder.id)
+                .map((note) => (
+                  <div
+                    key={note.id}
+                    className="pb-3"
+                    onClick={() =>
+                      navigate(`/folder/${note.folderId}/note/${note.id}`)
+                    }
+                  >
+                    <Card
+                      title={note.title}
+                      date={note.createdAt}
+                      preview={note.preview}
+                    />
+                  </div>
+                ))}
+            </div>
+          ))}
+        </div>
+      );
+    }
+
+    // Only notes match
+    return (
+      <div className="h-screen w-middle p-4 border-r overflow-y-auto font-name">
+        <h2 className="text-2xl font-semibold">Search Results</h2>
+
+        {matchingNotes.map((note) => (
+          <div
+            key={note.id}
+            className="pt-4"
+            onClick={() => navigate(`/folder/${note.folderId}/note/${note.id}`)}
+          >
+            <Card
+              title={note.title}
+              date={note.createdAt}
+              preview={note.preview}
+            />
+          </div>
+        ))}
+      </div>
+    );
+  }
 
   return (
     <div

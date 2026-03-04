@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { api } from "../api/axios";
 import type { Folder, RecentNote } from "../types/api";
 import { useNavigate, useParams } from "react-router-dom";
-
+import { useSearch } from "./SearchContext";
 import {
   FileText,
   Folder as FolderIcon,
@@ -15,10 +15,11 @@ import MoreSection from "./MoreSection";
 
 export default function Left() {
   const [folders, setFolders] = useState<Folder[]>([]);
-
   const [showInput, setShowInput] = useState(false);
   const [folderName, setFolderName] = useState("");
   const [loading, setLoading] = useState(false);
+  const { query, setQuery } = useSearch();
+  const [showSearch, setShowSearch] = useState(false);
 
   const navigate = useNavigate();
 
@@ -38,7 +39,6 @@ export default function Left() {
         console.log("Error in fetching folder", error);
       }
     }
-
     fetchFolder();
   }, []);
 
@@ -55,27 +55,15 @@ export default function Left() {
         console.log("Error in fetching recent notes:", error);
       }
     }
-
     fetchRecentNotes();
   }, []);
 
-  // auto-select first folder
+  // by default select first folder
   useEffect(() => {
     const path = window.location.pathname;
-
-    // Only redirect if exact path === "/"
     if (path === "/" && folders.length > 0) {
       navigate(`/folder/${folders[0].id}`, { replace: true });
     }
-    // if (
-    //   folders.length > 0 &&
-    //   !currentFolderId &&
-    //   path !== "/favorites" &&
-    //   path !== "/archived" &&
-    //   path !== "/trash"
-    // ) {
-    //   navigate(`/folder/${folders[0].id}`, { replace: true });
-    // }
   }, [folders, navigate]);
 
   // add folder when click on save button
@@ -100,11 +88,9 @@ export default function Left() {
     try {
       await api.delete(`/folders/${folderId}`);
       alert("Folder moved to Trash");
-
       // refresh folder list
       const res = await api.get("/folders");
       setFolders(res.data.folders);
-
       navigate("/trash"); // go to Trash page
     } catch (error) {
       console.log("Error deleting folder:", error);
@@ -128,10 +114,23 @@ export default function Left() {
           <img src="/images/Frame.svg" className="w-3" />
         </div>
 
-        <button className="hover:opacity-80">
+        <button
+          className="hover:opacity-80"
+          onClick={() => setShowSearch(!showSearch)}
+        >
           <Search size={20} />
         </button>
       </div>
+      {showSearch && (
+        <input
+          type="text"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder="Search notes or folders..."
+          className="w-full bg-gray-800 px-3 py-2 rounded font-name"
+        />
+      )}
+
       {/* new note*/}
       <div
         className="flex justify-center bg-card gap-2 rounded-sm p-2 cursor-pointer hover:opacity-90"
@@ -232,28 +231,6 @@ export default function Left() {
             </div>
           ))}
         </div>
-
-        {/* <div className="flex flex-col gap-1">
-          <div className="flex items-center gap-3">
-            <span>
-              <FolderOpen size={18} />
-            </span>
-            <div className="text-sm hover:text-base ">Personal</div>
-          </div>
-          <div className="flex items-center gap-3">
-            <span>
-              <Folder size={18} />
-            </span>
-            <div className="text-sm hover:text-base">Work</div>
-          </div>
-          <div className="flex items-center gap-3">
-            <span>
-              <Folder size={18} />
-            </span>
-            <div className="text-sm hover:text-base">Travel</div>
-          </div>
-         
-        </div> */}
       </div>
       {/* more section*/}
       <div className="flex flex-col gap-2">
