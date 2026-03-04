@@ -18,7 +18,7 @@ const Restore = ({ noteTitle, noteId }) => {
       <div>
         <RotateCcw className="w-16 h-16 text-gray-300" strokeWidth={0.5} />
       </div>
-      <h1 className="text-xl  font-semibold text-white font-name text-restore">
+      <h1 className="text-xl  font-semibold font-name text-restore">
         Restore “{noteTitle}”
       </h1>
       <p className="text-white/60 text-base font-name max-w-md text-center ">
@@ -28,7 +28,7 @@ const Restore = ({ noteTitle, noteId }) => {
       </p>
       <button
         onClick={handleRestore}
-        className="bg-indigo-600 hover:bg-indigo-500 text-white px-6 py-2 rounded-md transition duration-200"
+        className="bg-indigo-600 hover:bg-indigo-500  px-6 py-2 rounded-md transition duration-200"
       >
         Restore
       </button>

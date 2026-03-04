@@ -4,17 +4,26 @@ import Right from "../components/Right";
 import EmptyNote from "../components/EmptyNote";
 import { Routes, Route } from "react-router-dom";
 import { SearchProvider } from "../components/SearchContext";
+import { useState } from "react";
 
 const Home = () => {
+  const [theme, setTheme] = useState("dark");
+  function toggleTheme() {
+    setTheme(theme === "dark" ? "light" : "dark");
+  }
   return (
     <SearchProvider>
-      <div className="flex bg-black text-white h-screen w-full">
+      <div
+        className={`flex h-screen w-full ${
+          theme === "dark" ? "bg-black text-white" : "bg-white text-black"
+        }`}
+      >
         <Routes>
           <Route
             path="/"
             element={
               <>
-                <Left />
+                <Left theme={theme} toggleTheme={toggleTheme} />
                 <Middle />
                 <EmptyNote />
               </>
@@ -34,7 +43,7 @@ const Home = () => {
             path="/archived"
             element={
               <>
-                <Left />
+                <Left theme={theme} toggleTheme={toggleTheme} />
                 <Middle isArchivedPage={true} />
                 <EmptyNote />
               </>
@@ -44,7 +53,7 @@ const Home = () => {
             path="/trash/note/:noteId"
             element={
               <>
-                <Left />
+                <Left theme={theme} toggleTheme={toggleTheme} />
                 <Middle isTrashPage={true} />
                 <Right isTrashMode={true} />
               </>
@@ -55,7 +64,7 @@ const Home = () => {
             path="/trash"
             element={
               <>
-                <Left />
+                <Left theme={theme} toggleTheme={toggleTheme} />
                 <Middle isTrashPage={true} />
                 <EmptyNote />
               </>
@@ -66,7 +75,7 @@ const Home = () => {
             path="folder/:folderId/*"
             element={
               <>
-                <Left />
+                <Left theme={theme} toggleTheme={toggleTheme} />
                 <Routes>
                   {/* folder open then middle + right*/}
                   <Route

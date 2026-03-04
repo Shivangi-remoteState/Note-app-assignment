@@ -5,7 +5,7 @@ const MoreSection = () => {
   const navigate = useNavigate();
   return (
     <div className="flex flex-col gap-2">
-      <div className="text-sm px-2 text-gray-300">More</div>
+      <div className="text-sm px-2 font-bold">More</div>
 
       <div className="flex flex-col gap-1">
         <div

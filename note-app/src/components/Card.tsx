@@ -20,10 +20,14 @@ export default function NoteItem({ title, date, preview }: Props) {
         bg-card font-name rounded-lg
       `}
     >
-    <h1 className="text-title text-xl text-white font-semibold truncate">{title}</h1>
+      <h1 className="text-title text-xl text-white font-semibold truncate">
+        {title}
+      </h1>
       <div className="text-white/60 flex items-center gap-8 pt-1">
         <span className="text-title text-light">{formatDate(date)}</span>
-        <p className="text-sm text-white/60 font-semibold truncate">{preview}</p>
+        <p className="text-sm text-white/60 font-semibold truncate">
+          {preview}
+        </p>
       </div>
     </div>
   );

@@ -10,16 +10,27 @@ import {
   Plus,
   Search,
   Trash2,
+  Sun,
+  Moon,
+  FolderOpen,
 } from "lucide-react";
+interface props {
+  theme: string;
+  toggleTheme: () => void;
+}
+
 import MoreSection from "./MoreSection";
 
-export default function Left() {
+export default function Left({ theme, toggleTheme }: props) {
   const [folders, setFolders] = useState<Folder[]>([]);
   const [showInput, setShowInput] = useState(false);
   const [folderName, setFolderName] = useState("");
   const [loading, setLoading] = useState(false);
   const { query, setQuery } = useSearch();
   const [showSearch, setShowSearch] = useState(false);
+
+  const [editedFolderId, setEditedFolderId] = useState<string | null>(null);
+  const [editFoldername, setEditFolderName] = useState("");
 
   const navigate = useNavigate();
 
@@ -96,6 +107,20 @@ export default function Left() {
       console.log("Error deleting folder:", error);
     }
   }
+  // update folder
+  async function updateFolderName(folderId: string) {
+    if (!editFoldername.trim()) return;
+    try {
+      await api.patch(`/folders/${folderId}`, { name: editFoldername });
+      const response = await api.get("/folders");
+      setFolders(response.data.folders);
+      setEditedFolderId(null);
+      setEditFolderName("");
+    } catch (error) {
+      console.log("Errorin updating folder name:", error);
+    }
+  }
+
   return (
     <div
       className="
@@ -109,9 +134,15 @@ export default function Left() {
     >
       <div className="flex items-center justify-between ">
         <div className="flex items-center ">
-          <img src="/images/Nowted.svg" className="w-20" />
+          <img
+            src="/images/Nowted.svg"
+            className={`w-20 ${theme === "light" ? "brightness-0" : ""}`}
+          />
           {/* <div className="font-nowted">Nowted</div> */}
-          <img src="/images/Frame.svg" className="w-3" />
+          <img
+            src="/images/Frame.svg"
+            className={`w-3 ${theme === "light" ? "brightness-0" : ""}`}
+          />
         </div>
 
         <button
@@ -127,13 +158,17 @@ export default function Left() {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Search notes or folders..."
-          className="w-full bg-gray-800 px-3 py-2 rounded font-name"
+          className={`w-full px-3 py-2 rounded font-name ${
+            theme === "dark" ? "bg-card text-white" : "bg-gray-300 text-black"
+          }`}
         />
       )}
 
       {/* new note*/}
       <div
-        className="flex justify-center bg-card gap-2 rounded-sm p-2 cursor-pointer hover:opacity-90"
+        className={`flex justify-center gap-2 rounded-sm p-2 cursor-pointer hover:opacity-90 ${
+          theme === "dark" ? "bg-card text-white" : "bg-gray-300 text-black"
+        }`}
         onClick={() => {
           if (!currentFolderId) {
             alert("Please select a folder first!");
@@ -205,19 +240,54 @@ export default function Left() {
             <div
               key={folder.id}
               onClick={() => {
+                if (editedFolderId) return;
                 // console.log("clicked folder from left",folder.id)
                 // onClickFolder(folder.id);
                 navigate(`/folder/${folder.id}`, {
                   state: { folderName: folder.name },
                 });
               }}
-              className="flex items-center justify-between gap-3 px-2 py-1 hover:bg-hoverFile rounded cursor-pointer"
+              className={`flex items-center justify-between gap-3 px-2 py-1 rounded cursor-pointer
+${currentFolderId === folder.id ? "bg-hoverFile" : "hover:bg-hoverFile"}`}
             >
               <div className="flex gap-3">
-                <FolderIcon size={18} />
-                <div className="text-sm hover:text-base">
+                {currentFolderId === folder.id ? (
+                  <FolderOpen size={18} />
+                ) : (
+                  <FolderIcon size={18} />
+                )}
+                {/* <div className="text-sm hover:text-base">
                   {folder?.name || "Untitled"}
-                </div>
+                </div> */}
+                {editedFolderId === folder.id ? (
+                  <input
+                    value={editFoldername}
+                    autoFocus
+                    onChange={(e) => setEditFolderName(e.target.value)}
+                    onBlur={() => updateFolderName(folder.id)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        updateFolderName(folder.id);
+                      }
+                      if (e.key === "Escape") {
+                        setEditedFolderId(null);
+                        setEditFolderName("");
+                      }
+                    }}
+                    className="text-sm bg-transparent border "
+                  />
+                ) : (
+                  <div
+                    className="text-sm hover:text-base"
+                    onDoubleClick={(e) => {
+                      e.stopPropagation();
+                      setEditedFolderId(folder.id);
+                      setEditFolderName(folder.name);
+                    }}
+                  >
+                    {folder?.name || "Untitled"}
+                  </div>
+                )}
               </div>
               <span
                 onClick={(e) => {
@@ -235,6 +305,19 @@ export default function Left() {
       {/* more section*/}
       <div className="flex flex-col gap-2">
         <MoreSection />
+      </div>
+      <div onClick={toggleTheme}>
+        {theme === "dark" ? (
+          <div className="flex justify-center items-center gap-2 hover:opacity-65">
+            <Sun size={18} className="text-yellow-500" />
+            <span className="text-em font-name">Light Mode</span>
+          </div>
+        ) : (
+          <div className="flex justify-center items-center gap-2 hover:opacity-65">
+            <Moon size={18} className="text-blue-500" />
+            <span className="text-em font-name">Dark Mode</span>
+          </div>
+        )}
       </div>
     </div>
   );

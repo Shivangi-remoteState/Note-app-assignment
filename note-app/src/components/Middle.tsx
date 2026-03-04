@@ -80,6 +80,7 @@ export default function Middle({
       setFolderName("Trash");
       return;
     }
+
     if (!folderId) {
       setFolderName("");
       return;
@@ -89,12 +90,15 @@ export default function Middle({
       try {
         const response = await api.get("/folders");
         const folders = response.data.folders;
+
         const selectedFolder = folders.find((folder) => folder.id === folderId);
+
         setFolderName(selectedFolder?.name || "");
       } catch (error) {
         console.log("error in fetching folder :", error);
       }
     }
+
     loadFolderName();
   }, [folderId, isFavoritesPage, isArchivedPage, isTrashPage]);
 
@@ -104,9 +108,11 @@ export default function Middle({
 
   useEffect(() => {
     if (query.trim() === "") return;
+
     async function loadSearchData() {
       const responseFolder = await api.get("/folders");
       setAllSearchFolders(responseFolder.data.folders);
+
       const responseNote = await api.get("/notes?deleted=false&limit=500");
       setAllSearchNotes(responseNote.data.notes);
     }
