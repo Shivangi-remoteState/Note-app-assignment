@@ -33,7 +33,7 @@ const Home = () => {
             path="/favorites"
             element={
               <>
-                <Left />
+                <Left theme={theme} toggleTheme={toggleTheme} />
                 <Middle isFavoritesPage={true} />
                 <EmptyNote />
               </>

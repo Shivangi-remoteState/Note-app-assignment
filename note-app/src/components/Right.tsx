@@ -104,15 +104,11 @@ export default function Right({
   async function toggleFavorite() {
     try {
       const valUpdated = !isFavorite;
-
       await api.patch(`/notes/${noteId}`, {
         isFavorite: valUpdated,
       });
-
       setIsFavorite(valUpdated);
-
       setNote((prev) => (prev ? { ...prev, isFavorite: valUpdated } : prev));
-
       window.dispatchEvent(new Event("notesUpdated"));
     } catch (error) {
       console.log("Error in updating favorite:", error);
@@ -162,11 +158,11 @@ export default function Right({
         font-name 
       "
     >
-      <div className="flex  justify-between pb-8 relative">
-        {/* TITLE */}
+      <div className="flex  justify-between pb-8 ">
+        {/* title */}
         {editTitle ? (
           <input
-            className="text-3xl font-bold bg-transparent border-b outline-none"
+            className="text-3xl font-bold p-1 "
             value={title}
             autoFocus
             onBlur={() => setEditTitle(false)}

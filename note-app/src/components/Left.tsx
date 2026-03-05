@@ -23,7 +23,7 @@ import MoreSection from "./MoreSection";
 
 export default function Left({ theme, toggleTheme }: props) {
   const [folders, setFolders] = useState<Folder[]>([]);
-  const [showInput, setShowInput] = useState(false);
+  const [showInputBoxFolder, setShowInputBoxFolder] = useState(false);
   const [folderName, setFolderName] = useState("");
   const [loading, setLoading] = useState(false);
   const { query, setQuery } = useSearch();
@@ -53,7 +53,7 @@ export default function Left({ theme, toggleTheme }: props) {
     fetchFolder();
   }, []);
 
-  // fetching recent folder
+  // fetching recent notes
   const [recentNotes, setRecentNotes] = useState<RecentNote[]>([]);
   useEffect(() => {
     async function fetchRecentNotes() {
@@ -87,7 +87,7 @@ export default function Left({ theme, toggleTheme }: props) {
       // console.log("post response:", response.data);
       setFolders(response.data.folders);
       setFolderName("");
-      setShowInput(false);
+      setShowInputBoxFolder(false);
     } catch (error) {
       console.log("Error when creating folder:", error);
     } finally {
@@ -100,13 +100,14 @@ export default function Left({ theme, toggleTheme }: props) {
       await api.delete(`/folders/${folderId}`);
       alert("Folder moved to Trash");
       // refresh folder list
-      const res = await api.get("/folders");
-      setFolders(res.data.folders);
-      navigate("/trash"); // go to Trash page
+      const response = await api.get("/folders");
+      setFolders(response.data.folders);
+      navigate("/trash");
     } catch (error) {
-      console.log("Error deleting folder:", error);
+      console.log("Error in deleting folder:", error);
     }
   }
+
   // update folder
   async function updateFolderName(folderId: string) {
     if (!editFoldername.trim()) return;
@@ -117,7 +118,7 @@ export default function Left({ theme, toggleTheme }: props) {
       setEditedFolderId(null);
       setEditFolderName("");
     } catch (error) {
-      console.log("Errorin updating folder name:", error);
+      console.log("Error in updating folder name:", error);
     }
   }
 
@@ -129,7 +130,7 @@ export default function Left({ theme, toggleTheme }: props) {
         px-4 py-5
         flex flex-col 
         gap-gap
-     
+        font-name
       "
     >
       <div className="flex items-center justify-between ">
@@ -213,18 +214,21 @@ export default function Left({ theme, toggleTheme }: props) {
       <div className="flex flex-col gap-2 py-1 px-2 ">
         <div className="flex items-center justify-between gap-1">
           <div className="text-sm font-semibold">Folders</div>
-          <button className="opacity-80" onClick={() => setShowInput(true)}>
+          <button
+            className="opacity-80"
+            onClick={() => setShowInputBoxFolder(true)}
+          >
             <FolderPlus size={16} />
           </button>
         </div>
-        {showInput && (
+        {showInputBoxFolder && (
           <div className="flex items-center gap-2">
             <input
               type="text"
               value={folderName}
               onChange={(e) => setFolderName(e.target.value)}
               placeholder="Enter folder name"
-              className="border px-2 py-1 text-sm"
+              className="border px-2 py-1 font-name text-sm"
             />
             <button
               onClick={handleCreateFolder}
@@ -235,6 +239,7 @@ export default function Left({ theme, toggleTheme }: props) {
             </button>
           </div>
         )}
+        {/* load folder */}
         <div className="flex flex-col gap-1 max-h-60 overflow-y-auto">
           {folders.map((folder) => (
             <div
@@ -274,13 +279,12 @@ ${currentFolderId === folder.id ? "bg-hoverFile" : "hover:bg-hoverFile"}`}
                         setEditFolderName("");
                       }
                     }}
-                    className="text-sm bg-transparent border "
+                    className="text-sm bg-transparent border"
                   />
                 ) : (
                   <div
                     className="text-sm hover:text-base"
-                    onDoubleClick={(e) => {
-                      e.stopPropagation();
+                    onDoubleClick={() => {
                       setEditedFolderId(folder.id);
                       setEditFolderName(folder.name);
                     }}
@@ -290,8 +294,7 @@ ${currentFolderId === folder.id ? "bg-hoverFile" : "hover:bg-hoverFile"}`}
                 )}
               </div>
               <span
-                onClick={(e) => {
-                  e.stopPropagation();
+                onClick={() => {
                   deleteFolder(folder.id);
                 }}
                 className="curser-pointer hover:text-red-600"
