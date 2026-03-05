@@ -138,10 +138,8 @@ export default function Middle({
       f.name.toLowerCase().includes(q),
     );
 
-    const matchingNotes = allSearchNote.filter(
-      (n) =>
-        (n.title?.toLowerCase() || "").includes(q) ||
-        (n.content?.toLowerCase() || "").includes(q),
+    const matchingNotes = allSearchNote.filter((n) =>
+      (n.title?.toLowerCase() || "").includes(q),
     );
 
     // if folder matches then  folder + notes is

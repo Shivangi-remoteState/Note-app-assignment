@@ -28,6 +28,7 @@ export default function Left({ theme, toggleTheme }: props) {
   const [loading, setLoading] = useState(false);
   const { query, setQuery } = useSearch();
   const [showSearch, setShowSearch] = useState(false);
+  const [searchInpText, setSearchInpText] = useState(query);
 
   const [editedFolderId, setEditedFolderId] = useState<string | null>(null);
   const [editFoldername, setEditFolderName] = useState("");
@@ -121,7 +122,14 @@ export default function Left({ theme, toggleTheme }: props) {
       console.log("Error in updating folder name:", error);
     }
   }
+  //  debouncing
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setQuery(searchInpText);
+    }, 200);
 
+    return () => clearTimeout(timer);
+  }, [searchInpText, setQuery]);
   return (
     <div
       className="
@@ -156,8 +164,8 @@ export default function Left({ theme, toggleTheme }: props) {
       {showSearch && (
         <input
           type="text"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
+          value={searchInpText}
+          onChange={(e) => setSearchInpText(e.target.value)}
           placeholder="Search notes or folders..."
           className={`w-full px-3 py-2 rounded font-name ${
             theme === "dark" ? "bg-card text-white" : "bg-gray-300 text-black"
