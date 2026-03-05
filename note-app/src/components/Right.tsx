@@ -66,8 +66,8 @@ export default function Right({
         folderId,
       });
       alert("Note created");
+      window.dispatchEvent(new Event("notesCreated"));
       const newNoteId = response.data.note.id;
-
       navigate(`/folder/${folderId}/note/${newNoteId}`);
     } catch (error) {
       console.log("Error in creating note:", error);

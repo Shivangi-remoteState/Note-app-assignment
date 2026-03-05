@@ -17,52 +17,63 @@ export default function Middle({
   const [notes, setNotes] = useState<Note[]>([]);
   const [folderName, setFolderName] = useState("");
 
+  async function loadNotes() {
+    try {
+      // favourite
+      if (isFavoritesPage) {
+        const response = await api.get(
+          "/notes?archived=false&favorite=true&deleted=false&limit=100",
+        );
+        const favData = response.data.notes;
+        setNotes(favData);
+        return;
+      }
+      // archived
+      else if (isArchivedPage) {
+        const response = await api.get(
+          "/notes?archived=true&favorite=false&deleted=false&limit=100",
+        );
+        const archiveData = response.data.notes;
+        setNotes(archiveData);
+        return;
+      }
+
+      // trash
+      else if (isTrashPage) {
+        const response = await api.get("/notes?deleted=true&limit=200");
+        const trashData = response.data.notes;
+        setNotes(trashData);
+        return;
+      }
+
+      if (!folderId) {
+        setNotes([]);
+        return;
+      }
+      const response = await api.get(`/notes?folderId=${folderId}`);
+      const noteData = response.data.notes;
+      setNotes(noteData);
+    } catch (error) {
+      console.log("Error in loading notes", error);
+    }
+  }
   // fetching notes when folder chnages
   useEffect(() => {
-    async function loadNotes() {
-      try {
-        // favourite
-        if (isFavoritesPage) {
-          const response = await api.get(
-            "/notes?archived=false&favorite=true&deleted=false&limit=100",
-          );
-          const favData = response.data.notes;
-          setNotes(favData);
-          setFolderName("Favourites");
-          return;
-        }
-        // archived
-        else if (isArchivedPage) {
-          const response = await api.get(
-            "/notes?archived=true&favorite=false&deleted=false&limit=100",
-          );
-          const archiveData = response.data.notes;
-          setNotes(archiveData);
-          setFolderName("Archived Notes");
-          return;
-        }
-
-        // trash
-        else if (isTrashPage) {
-          const response = await api.get("/notes?deleted=true&limit=200");
-          const trashData = response.data.notes;
-          setNotes(trashData);
-          setFolderName("Trash");
-          return;
-        }
-
-        if (!folderId) {
-          setNotes([]);
-          return;
-        }
-        const response = await api.get(`/notes?folderId=${folderId}`);
-        const noteData = response.data.notes;
-        setNotes(noteData);
-      } catch (error) {
-        console.log("Error in loading notes", error);
-      }
-    }
     loadNotes();
+  }, [folderId, isFavoritesPage, isArchivedPage, isTrashPage]);
+
+  // refresh note in middle
+  useEffect(() => {
+    function refreshNotes() {
+      loadNotes();
+    }
+    window.addEventListener("notesCreated", refreshNotes);
+    window.addEventListener("notesUpdated", refreshNotes);
+
+    return () => {
+      window.removeEventListener("notesUpdated", refreshNotes);
+      window.removeEventListener("notesCreated", refreshNotes);
+    };
   }, [folderId, isFavoritesPage, isArchivedPage, isTrashPage]);
 
   // to show folderName as heading in middleportion
@@ -80,7 +91,6 @@ export default function Middle({
       setFolderName("Trash");
       return;
     }
-
     if (!folderId) {
       setFolderName("");
       return;

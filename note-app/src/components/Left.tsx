@@ -204,7 +204,9 @@ export default function Left({ theme, toggleTheme }: props) {
               }
             >
               <FileText size={20} />
-              <div className="text-sm">{note.title || "Untitled"}</div>
+              <div className="text-sm truncate flex-1">
+                {note.title || "Untitled"}
+              </div>
             </div>
           ))}
         </div>
@@ -252,10 +254,10 @@ export default function Left({ theme, toggleTheme }: props) {
                   state: { folderName: folder.name },
                 });
               }}
-              className={`flex items-center justify-between gap-3 px-2 py-1 rounded cursor-pointer
+              className={`flex items-center justify-between group gap-3 px-2 py-1 rounded cursor-pointer
 ${currentFolderId === folder.id ? "bg-hoverFile" : "hover:bg-hoverFile"}`}
             >
-              <div className="flex gap-3">
+              <div className="flex gap-3 flex-1 min-w-0">
                 {currentFolderId === folder.id ? (
                   <FolderOpen size={18} />
                 ) : (
@@ -283,7 +285,7 @@ ${currentFolderId === folder.id ? "bg-hoverFile" : "hover:bg-hoverFile"}`}
                   />
                 ) : (
                   <div
-                    className="text-sm hover:text-base"
+                    className="text-sm hover:text-base truncate flex-1"
                     onDoubleClick={() => {
                       setEditedFolderId(folder.id);
                       setEditFolderName(folder.name);
@@ -297,7 +299,7 @@ ${currentFolderId === folder.id ? "bg-hoverFile" : "hover:bg-hoverFile"}`}
                 onClick={() => {
                   deleteFolder(folder.id);
                 }}
-                className="curser-pointer hover:text-red-600"
+                className="curser-pointer hover:text-red-600 opacity-0 group-hover:opacity-100"
               >
                 <Trash2 size={18} />
               </span>
