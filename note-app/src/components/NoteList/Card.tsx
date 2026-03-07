@@ -1,10 +1,18 @@
 interface Props {
+  id: string;
   title: string;
   date: string;
   preview: string;
+  isActive: boolean;
 }
 
-export default function NoteItem({ title, date, preview }: Props) {
+export default function NoteItem({
+  title,
+  date,
+  preview,
+
+  isActive,
+}: Props) {
   function formatDate(dateString: string) {
     const date = new Date(dateString);
     const day = String(date.getDate()).padStart(2, "0");
@@ -13,11 +21,13 @@ export default function NoteItem({ title, date, preview }: Props) {
 
     return `${day}/${month}/${year}`;
   }
+
   return (
     <div
       className={`
         w-full p-4 border border-white/5 cursor-pointer 
         bg-card font-name rounded-lg
+        ${isActive ? "bg-hoverFile border-blue-500" : "hover:bg-hoverFile"}
       `}
     >
       <h1 className="text-title text-xl text-white font-semibold truncate">

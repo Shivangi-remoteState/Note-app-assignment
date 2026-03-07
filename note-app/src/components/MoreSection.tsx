@@ -1,15 +1,22 @@
 import { Archive, Star, Trash } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const MoreSection = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+
   return (
     <div className="flex flex-col gap-2">
       <div className="text-sm px-2 font-bold">More</div>
 
       <div className="flex flex-col gap-1">
         <div
-          className="flex items-center gap-3 px-2 py-1 hover:bg-hoverFile rounded cursor-pointer"
+          className={`flex items-center gap-3 px-2 py-1 rounded cursor-pointer
+          ${
+            location.pathname === "/favorites"
+              ? "bg-hoverFile"
+              : "hover:bg-hoverFile"
+          }`}
           onClick={() => navigate("/favorites")}
         >
           <span className="text-base">
@@ -19,7 +26,12 @@ const MoreSection = () => {
         </div>
 
         <div
-          className="flex items-center gap-3 px-2 py-1 hover:bg-hoverFile rounded cursor-pointer"
+          className={`flex items-center gap-3 px-2 py-1 rounded cursor-pointer
+          ${
+            location.pathname === "/trash"
+              ? "bg-hoverFile"
+              : "hover:bg-hoverFile"
+          }`}
           onClick={() => navigate("/trash")}
         >
           <span className="text-base">
@@ -29,7 +41,12 @@ const MoreSection = () => {
         </div>
 
         <div
-          className="flex items-center gap-3 px-2 py-1 hover:bg-hoverFile rounded cursor-pointer"
+          className={`flex items-center gap-3 px-2 py-1 rounded cursor-pointer
+          ${
+            location.pathname === "/archived"
+              ? "bg-hoverFile"
+              : "hover:bg-hoverFile"
+          }`}
           onClick={() => navigate("/archived")}
         >
           <span className="text-base">

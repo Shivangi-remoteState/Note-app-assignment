@@ -1,9 +1,9 @@
-import Left from "../components/Left";
-import Middle from "../components/Middle";
-import Right from "../components/Right";
+import Left from "../components/sidebar/Left";
+import Middle from "../components/NoteList/Middle";
+import Right from "../components/NotePanel/Right";
 import EmptyNote from "../components/EmptyNote";
 import { Routes, Route } from "react-router-dom";
-import { SearchProvider } from "../components/SearchContext";
+import { SearchProvider } from "../context/SearchContext";
 import { useState } from "react";
 
 const Home = () => {

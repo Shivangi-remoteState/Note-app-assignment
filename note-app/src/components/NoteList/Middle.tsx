@@ -1,9 +1,11 @@
-import { useEffect, useState } from "react";
-import { api } from "../api/axios";
-import type { Note, Folder } from "../types/api";
+import { useEffect, useState, useRef } from "react";
+import { api } from "../../api/axios";
+import type { Note, Folder } from "../../types/api";
 import Card from "./Card";
 import { useNavigate, useParams } from "react-router-dom";
-import { useSearch } from "./SearchContext";
+import { useSearch } from "../../context/SearchContext";
+import { useNotes } from "@/context/NotesContext";
+import NotesList from "./NotesList";
 
 // fetchingnote from selected folder fromleft
 export default function Middle({
@@ -16,8 +18,19 @@ export default function Middle({
   const { query } = useSearch();
   const [notes, setNotes] = useState<Note[]>([]);
   const [folderName, setFolderName] = useState("");
+  const { refreshTrigger } = useNotes();
+  const [selectedNoteId, setSelectedNoteId] = useState<string | null>(null);
+  // pagination
 
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
+  const [hasMore, setHasMore] = useState(true);
+  const [loading, setLoading] = useState(false);
+  // detect scroll
+  const containerRef = useRef<HTMLDivElement>(null);
   async function loadNotes() {
+    if (loading || !hasMore) return;
+    setLoading(true);
     try {
       // favourite
       if (isFavoritesPage) {
@@ -50,31 +63,35 @@ export default function Middle({
         setNotes([]);
         return;
       }
-      const response = await api.get(`/notes?folderId=${folderId}`);
+      const response = await api.get("/notes", {
+        params: {
+          folderId,
+          page,
+          limit,
+        },
+      });
+
       const noteData = response.data.notes;
-      setNotes(noteData);
+
+      setNotes((prev) => [...prev, ...noteData]);
+
+      if (noteData.length < limit) {
+        setHasMore(false);
+      }
     } catch (error) {
       console.log("Error in loading notes", error);
     }
+    setLoading(false);
   }
   // fetching notes when folder chnages
   useEffect(() => {
-    loadNotes();
-  }, [folderId, isFavoritesPage, isArchivedPage, isTrashPage]);
-
-  // refresh note in middle
+    setNotes([]);
+    setPage(1);
+    setHasMore(true);
+  }, [folderId, isFavoritesPage, isArchivedPage, isTrashPage, refreshTrigger]);
   useEffect(() => {
-    function refreshNotes() {
-      loadNotes();
-    }
-    window.addEventListener("notesCreated", refreshNotes);
-    window.addEventListener("notesUpdated", refreshNotes);
-
-    return () => {
-      window.removeEventListener("notesUpdated", refreshNotes);
-      window.removeEventListener("notesCreated", refreshNotes);
-    };
-  }, [folderId, isFavoritesPage, isArchivedPage, isTrashPage]);
+    loadNotes();
+  }, [page, folderId]);
 
   // to show folderName as heading in middleportion
   useEffect(() => {
@@ -111,6 +128,27 @@ export default function Middle({
 
     loadFolderName();
   }, [folderId, isFavoritesPage, isArchivedPage, isTrashPage]);
+  useEffect(() => {
+    const container = containerRef.current;
+
+    if (!container) return;
+
+    const handleScroll = () => {
+      if (loading || !hasMore) return;
+
+      const bottom =
+        container.scrollHeight - container.scrollTop <=
+        container.clientHeight + 20;
+
+      if (bottom) {
+        setPage((prev) => prev + 1);
+      }
+    };
+
+    container.addEventListener("scroll", handleScroll);
+
+    return () => container.removeEventListener("scroll", handleScroll);
+  }, [loading, hasMore]);
 
   // search
   const [allSearchNote, setAllSearchNotes] = useState<Note[]>([]);
@@ -143,7 +181,10 @@ export default function Middle({
     // if folder matches then  folder + notes is
     if (matchingFolders.length > 0) {
       return (
-        <div className="h-screen w-middle p-4 border-r overflow-y-auto font-name">
+        <div
+          ref={containerRef}
+          className="h-screen w-middle p-4 border-r overflow-y-auto font-name"
+        >
           <h2 className="text-2xl font-semibold">Folders</h2>
 
           {matchingFolders.map((folder) => (
@@ -185,6 +226,7 @@ export default function Middle({
             onClick={() => navigate(`/folder/${note.folderId}/note/${note.id}`)}
           >
             <Card
+              id={note.id}
               title={note.title}
               date={note.createdAt}
               preview={note.preview}
@@ -208,39 +250,16 @@ export default function Middle({
       "
     >
       <h2 className="text-2xl font-semibold">{folderName || "Notes"}</h2>
-      {notes.map((note) => (
-        <div
-          key={note.id}
-          className="flex flex-col gap-3 "
-          onClick={() => {
-            if (isTrashPage) {
-              navigate(`/trash/note/${note.id}`);
-            } else {
-              navigate(`/folder/${note.folderId}/note/${note.id}`);
-            }
-          }}
-        >
-          <Card
-            title={note.title}
-            date={note.createdAt}
-            preview={note.preview}
-          />
-        </div>
-      ))}
-
-      {/* <div className="flex flex-col gap-3">
-        <Card
-          title="June Reflections"
-          date="5 July 2024"
-          preview="A reflective look at what happened during June..."
-        />
-        <Card
-          title="Shopping List"
-          date="1 July 2024"
-          preview="Eggs, Bread, Milk, Coffee and some extra snacks..."
-        />
-       
-      </div> */}
+      {/* notes List */}
+      <NotesList
+        notes={notes}
+        isTrashPage={isTrashPage}
+        selectedNoteId={selectedNoteId}
+        setSelectedNoteId={setSelectedNoteId}
+      />
+      {loading && (
+        <div className="text-center text-sm opacity-60">Loading notes...</div>
+      )}
     </div>
   );
 }
