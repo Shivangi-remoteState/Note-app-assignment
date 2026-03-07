@@ -100,11 +100,9 @@ export default function Middle({
       try {
         const response = await api.get("/folders");
         const folders = response.data.folders;
-
         const selectedFolder = folders.find(
           (folder: Folder) => folder.id === folderId,
         );
-
         setFolderName(selectedFolder?.name || "");
       } catch (error) {
         console.log("error in fetching folder :", error);

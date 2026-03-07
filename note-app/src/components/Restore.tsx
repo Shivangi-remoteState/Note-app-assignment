@@ -2,7 +2,11 @@ import { api } from "@/api/axios";
 import { RotateCcw } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
-const Restore = ({ noteTitle, noteId }) => {
+interface RestoreProps {
+  noteTitle: string;
+  noteId: string;
+}
+const Restore = ({ noteTitle, noteId }: RestoreProps) => {
   const navigate = useNavigate();
   async function handleRestore() {
     try {

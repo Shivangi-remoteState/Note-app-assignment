@@ -126,7 +126,7 @@ export default function Left({ theme, toggleTheme }: props) {
   useEffect(() => {
     const timer = setTimeout(() => {
       setQuery(searchInpText);
-    }, 200);
+    }, 500);
 
     return () => clearTimeout(timer);
   }, [searchInpText, setQuery]);

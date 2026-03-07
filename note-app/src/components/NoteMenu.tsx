@@ -1,11 +1,18 @@
 import { Star, Archive, Trash2 } from "lucide-react";
+interface NoteMenuProps {
+  isFavorite: boolean;
+  toggleFavorite: () => void;
+  isArchived: boolean;
+  toggleArchive: () => void;
+  handleDelete: () => void;
+}
 const NoteMenu = ({
   isFavorite,
   toggleFavorite,
   isArchived,
   toggleArchive,
   handleDelete,
-}) => {
+}: NoteMenuProps) => {
   return (
     <div
       className="
