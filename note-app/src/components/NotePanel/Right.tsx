@@ -12,6 +12,7 @@ import useFolder from "@/hooks/useFolder";
 import { useAutoSave } from "@/hooks/useAutoSave";
 import { useNotes } from "@/context/NotesContext";
 import ConfirmDelete from "../ConfirmDelete";
+import { toast } from "sonner";
 
 interface RightProps {
   isNewNote?: boolean;
@@ -88,6 +89,7 @@ export default function Right({
         });
 
         const newId = response.data.id;
+        toast.success("Note created");
         setCurrentNoteId(newId);
         refreshNotes();
         navigate(`/folder/${selectedFolder}/note/${newId}`, { replace: true });
@@ -127,6 +129,7 @@ export default function Right({
       await api.patch(`/notes/${noteId}`, {
         folderId,
       });
+      toast.success("Folder updated");
       navigate(`/folder/${folderId}/note/${noteId}`);
     } catch (error) {
       console.log("Error updating folder:", error);
@@ -140,6 +143,9 @@ export default function Right({
       await api.patch(`/notes/${noteId}`, {
         isFavorite: valUpdated,
       });
+      toast.success(
+        valUpdated ? "Added to favorites" : "Removed from favorites",
+      );
       setIsFavorite(valUpdated);
       setNote((prev) => (prev ? { ...prev, isFavorite: valUpdated } : prev));
       refreshNotes();
@@ -156,6 +162,7 @@ export default function Right({
       await api.patch(`/notes/${noteId}`, {
         isArchived: valUpdated,
       });
+      toast.success(valUpdated ? "Note archived" : "Removed from archive");
       setIsArchived(valUpdated);
       setNote((prev) => (prev ? { ...prev, isArchived: valUpdated } : prev));
       refreshNotes();
@@ -167,6 +174,7 @@ export default function Right({
   async function handleDelete() {
     try {
       await api.delete(`/notes/${noteId}`);
+      toast.success("Note moved to trash");
       refreshNotes();
       navigate(`/trash/note/${noteId}`);
     } catch (error) {

@@ -1,4 +1,5 @@
 import { api } from "@/api/axios";
+import { showSuccess } from "@/utils/toast";
 import { RotateCcw } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
@@ -11,7 +12,7 @@ const Restore = ({ noteTitle, noteId }: RestoreProps) => {
   async function handleRestore() {
     try {
       await api.post(`/notes/${noteId}/restore`);
-      alert("Note restored");
+      showSuccess("Note restored");
       navigate("/");
     } catch (error) {
       console.log("Error in restoring notes:", error);

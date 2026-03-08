@@ -11,6 +11,7 @@ import RecentNotes from "./RecentNotes";
 import ThemeToggle from "./ThemeToggle";
 import NewNoteButton from "./NewNoteButton";
 import ConfirmDelete from "../ConfirmDelete";
+import { showSuccess } from "@/utils/toast";
 
 interface props {
   theme: string;
@@ -81,8 +82,8 @@ export default function Left({ theme, toggleTheme }: props) {
     try {
       setLoading(true);
       await api.post("/folders", { name: folderName });
+      showSuccess("Folder created");
       const response = await api.get("/folders");
-      // console.log("post response:", response.data);
       setFolders(response.data.folders);
       setFolderName("");
       setShowInputBoxFolder(false);
@@ -96,7 +97,7 @@ export default function Left({ theme, toggleTheme }: props) {
   async function deleteFolder(folderId: string) {
     try {
       await api.delete(`/folders/${folderId}`);
-      alert("Folder moved to Trash");
+      showSuccess("Folder moved to Trash");
       // refresh folder list
       const response = await api.get("/folders");
       setFolders(response.data.folders);
@@ -111,6 +112,7 @@ export default function Left({ theme, toggleTheme }: props) {
     if (!editFoldername.trim()) return;
     try {
       await api.patch(`/folders/${folderId}`, { name: editFoldername });
+      showSuccess("Folder renamed");
       const response = await api.get("/folders");
       setFolders(response.data.folders);
       setEditedFolderId(null);
