@@ -10,6 +10,7 @@ import { FolderPlus } from "lucide-react";
 import RecentNotes from "./RecentNotes";
 import ThemeToggle from "./ThemeToggle";
 import NewNoteButton from "./NewNoteButton";
+import ConfirmDelete from "../ConfirmDelete";
 
 interface props {
   theme: string;
@@ -27,6 +28,8 @@ export default function Left({ theme, toggleTheme }: props) {
 
   const [editedFolderId, setEditedFolderId] = useState<string | null>(null);
   const [editFoldername, setEditFolderName] = useState("");
+
+  const [folderToDelete, setFolderToDelete] = useState<string | null>(null);
 
   const navigate = useNavigate();
 
@@ -192,7 +195,7 @@ export default function Left({ theme, toggleTheme }: props) {
           setEditedFolderId={setEditedFolderId}
           navigate={navigate}
           updateFolderName={updateFolderName}
-          deleteFolder={deleteFolder}
+          deleteFolder={(id) => setFolderToDelete(id)}
         />
       </div>
       {/* more section*/}
@@ -201,6 +204,17 @@ export default function Left({ theme, toggleTheme }: props) {
       </div>
       {/* theme button */}
       <ThemeToggle theme={theme} toggleTheme={toggleTheme} />
+      {folderToDelete && (
+        <ConfirmDelete
+          title="Delete Folder"
+          message="All notes inside this folder will also be moved to Trash."
+          onCancel={() => setFolderToDelete(null)}
+          onConfirm={async () => {
+            await deleteFolder(folderToDelete);
+            setFolderToDelete(null);
+          }}
+        />
+      )}
     </div>
   );
 }

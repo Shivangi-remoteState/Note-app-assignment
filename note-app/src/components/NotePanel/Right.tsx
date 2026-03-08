@@ -11,6 +11,7 @@ import useNote from "@/hooks/useNote";
 import useFolder from "@/hooks/useFolder";
 import { useAutoSave } from "@/hooks/useAutoSave";
 import { useNotes } from "@/context/NotesContext";
+import ConfirmDelete from "../ConfirmDelete";
 
 interface RightProps {
   isNewNote?: boolean;
@@ -40,6 +41,8 @@ export default function Right({
   const [saveStatus, setSaveStatus] = useState("Idle");
 
   const [folderDropdownOpen, setFolderDropdownOpen] = useState(false);
+
+  const [noteToDelete, setNoteToDelete] = useState<string | null>(null);
 
   const { refreshNotes } = useNotes();
 
@@ -164,7 +167,6 @@ export default function Right({
   async function handleDelete() {
     try {
       await api.delete(`/notes/${noteId}`);
-      alert("Note deleted and move to trash");
       refreshNotes();
       navigate(`/trash/note/${noteId}`);
     } catch (error) {
@@ -188,7 +190,7 @@ export default function Right({
         setMenuOpen={setMenuOpen}
         toggleFavorite={toggleFavorite}
         toggleArchived={toggleArchived}
-        handleDelete={handleDelete}
+        handleDelete={() => setNoteToDelete(noteId || null)}
       />
       <div className="flex flex-col gap-4">
         {/* note date + folder name  */}
@@ -206,6 +208,17 @@ export default function Right({
       <NoteContent content={content} setContent={setContent} />
       {/* status */}
       <StatusIndication status={saveStatus} />
+      {noteToDelete && (
+        <ConfirmDelete
+          title="Delete Note"
+          message="Are you sure you want to delete this note?"
+          onCancel={() => setNoteToDelete(null)}
+          onConfirm={async () => {
+            await handleDelete();
+            setNoteToDelete(null);
+          }}
+        />
+      )}
     </div>
   );
 }
