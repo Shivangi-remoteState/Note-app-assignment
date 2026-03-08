@@ -7,39 +7,47 @@ interface Props {
   isTrashPage: boolean;
   selectedNoteId: string | null;
   setSelectedNoteId: (id: string) => void;
+  lastNoteRef?: (node: HTMLDivElement | null) => void;
 }
 const NotesList = ({
   notes,
   isTrashPage,
   selectedNoteId,
   setSelectedNoteId,
+  lastNoteRef,
 }: Props) => {
   const navigate = useNavigate();
   return (
     <>
       {" "}
-      {notes.map((note) => (
-        <div
-          key={note.id}
-          className="flex flex-col gap-3 "
-          onClick={() => {
-            setSelectedNoteId(note.id);
-            if (isTrashPage) {
-              navigate(`/trash/note/${note.id}`);
-            } else {
-              navigate(`/folder/${note.folderId}/note/${note.id}`);
-            }
-          }}
-        >
-          <Card
-            id={note.id}
-            title={note.title}
-            date={note.createdAt}
-            preview={note.preview}
-            isActive={selectedNoteId === note.id}
-          />
-        </div>
-      ))}
+      {notes.map((note, index) => {
+        const isLast = index === notes.length - 1;
+
+        return (
+          <div
+            ref={isLast ? lastNoteRef : null}
+            key={note.id}
+            className="flex flex-col gap-3"
+            onClick={() => {
+              setSelectedNoteId(note.id);
+
+              if (isTrashPage) {
+                navigate(`/trash/note/${note.id}`);
+              } else {
+                navigate(`/folder/${note.folderId}/note/${note.id}`);
+              }
+            }}
+          >
+            <Card
+              id={note.id}
+              title={note.title}
+              date={note.createdAt}
+              preview={note.preview}
+              isActive={selectedNoteId === note.id}
+            />
+          </div>
+        );
+      })}
     </>
   );
 };

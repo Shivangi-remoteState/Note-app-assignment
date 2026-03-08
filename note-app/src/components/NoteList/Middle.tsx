@@ -6,6 +6,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useSearch } from "../../context/SearchContext";
 import { useNotes } from "@/context/NotesContext";
 import NotesList from "./NotesList";
+import useFolder from "@/hooks/useFolder";
 
 // fetchingnote from selected folder fromleft
 export default function Middle({
@@ -17,138 +18,88 @@ export default function Middle({
   const navigate = useNavigate();
   const { query } = useSearch();
   const [notes, setNotes] = useState<Note[]>([]);
-  const [folderName, setFolderName] = useState("");
   const { refreshTrigger } = useNotes();
+  const loaderRef = useRef<HTMLDivElement | null>(null);
   const [selectedNoteId, setSelectedNoteId] = useState<string | null>(null);
-  // pagination
 
   const [page, setPage] = useState(1);
-  const [limit, setLimit] = useState(10);
-  const [hasMore, setHasMore] = useState(true);
   const [loading, setLoading] = useState(false);
-  // detect scroll
-  const containerRef = useRef<HTMLDivElement>(null);
-  async function loadNotes() {
-    if (loading || !hasMore) return;
-    setLoading(true);
+  const [hasMore, setHasMore] = useState(true);
+
+  async function loadNotes(pageNumber = 1) {
     try {
-      // favourite
+      setLoading(true);
+      let url = `/notes?page=${pageNumber}&limit=10`;
+      // if folder note
+      if (folderId) {
+        url += `&folderId=${folderId}`;
+      }
       if (isFavoritesPage) {
-        const response = await api.get(
-          "/notes?archived=false&favorite=true&deleted=false&limit=100",
-        );
-        const favData = response.data.notes;
-        setNotes(favData);
-        return;
-      }
-      // archived
-      else if (isArchivedPage) {
-        const response = await api.get(
-          "/notes?archived=true&favorite=false&deleted=false&limit=100",
-        );
-        const archiveData = response.data.notes;
-        setNotes(archiveData);
-        return;
+        url += `&favorite=true&deleted=false&archived=false`;
       }
 
-      // trash
-      else if (isTrashPage) {
-        const response = await api.get("/notes?deleted=true&limit=200");
-        const trashData = response.data.notes;
-        setNotes(trashData);
-        return;
+      if (isArchivedPage) {
+        url += `&archived=true`;
       }
 
-      if (!folderId) {
-        setNotes([]);
-        return;
+      if (isTrashPage) {
+        url += `&deleted=true`;
       }
-      const response = await api.get("/notes", {
-        params: {
-          folderId,
-          page,
-          limit,
-        },
-      });
 
+      const response = await api.get(url);
       const noteData = response.data.notes;
-
-      setNotes((prev) => [...prev, ...noteData]);
-
-      if (noteData.length < limit) {
+      if (pageNumber === 1) {
+        setNotes(noteData);
+      } else {
+        setNotes((prev) => [...prev, ...noteData]);
+      }
+      if (noteData.length < 10) {
         setHasMore(false);
       }
     } catch (error) {
       console.log("Error in loading notes", error);
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   }
   // fetching notes when folder chnages
   useEffect(() => {
-    setNotes([]);
     setPage(1);
     setHasMore(true);
+    loadNotes(1);
   }, [folderId, isFavoritesPage, isArchivedPage, isTrashPage, refreshTrigger]);
+
+  // scrolling
   useEffect(() => {
-    loadNotes();
-  }, [page, folderId]);
+    const observer = new IntersectionObserver((entries) => {
+      const first = entries[0];
+
+      if (first.isIntersecting && hasMore && !loading) {
+        const nextPage = page + 1;
+        setPage(nextPage);
+        loadNotes(nextPage);
+      }
+    });
+
+    const current = loaderRef.current;
+
+    if (current) observer.observe(current);
+
+    return () => {
+      if (current) observer.unobserve(current);
+    };
+  }, [hasMore, loading]);
 
   // to show folderName as heading in middleportion
-  useEffect(() => {
-    if (isArchivedPage) {
-      setFolderName("Archived Notes");
-      return;
-    }
-    if (isFavoritesPage) {
-      // console.log("isFavoritesPage =", isFavoritesPage);
-      setFolderName("Favorites");
-      return;
-    }
-    if (isTrashPage) {
-      setFolderName("Trash");
-      return;
-    }
-    if (!folderId) {
-      setFolderName("");
-      return;
-    }
-
-    async function loadFolderName() {
-      try {
-        const response = await api.get("/folders");
-        const folders = response.data.folders;
-        const selectedFolder = folders.find(
-          (folder: Folder) => folder.id === folderId,
-        );
-        setFolderName(selectedFolder?.name || "");
-      } catch (error) {
-        console.log("error in fetching folder :", error);
-      }
-    }
-
-    loadFolderName();
-  }, [folderId, isFavoritesPage, isArchivedPage, isTrashPage]);
-  useEffect(() => {
-    const container = containerRef.current;
-
-    if (!container) return;
-
-    const handleScroll = () => {
-      if (loading || !hasMore) return;
-
-      const bottom =
-        container.scrollHeight - container.scrollTop <=
-        container.clientHeight + 20;
-
-      if (bottom) {
-        setPage((prev) => prev + 1);
-      }
-    };
-
-    container.addEventListener("scroll", handleScroll);
-
-    return () => container.removeEventListener("scroll", handleScroll);
-  }, [loading, hasMore]);
+  const folders = useFolder();
+  let folderName = "Notes";
+  if (isArchivedPage) folderName = "Archived Notes";
+  else if (isFavoritesPage) folderName = "Favorites";
+  else if (isTrashPage) folderName = "Trash";
+  else if (folderId) {
+    const selected = folders.find((f) => f.id === folderId);
+    folderName = selected?.name || "Notes";
+  }
 
   // search
   const [allSearchNote, setAllSearchNotes] = useState<Note[]>([]);
@@ -158,8 +109,7 @@ export default function Middle({
     if (query.trim() === "") return;
 
     async function loadSearchData() {
-      const responseFolder = await api.get("/folders");
-      setAllSearchFolders(responseFolder.data.folders);
+      setAllSearchFolders(folders);
 
       const responseNote = await api.get("/notes?deleted=false&limit=500");
       setAllSearchNotes(responseNote.data.notes);
@@ -181,10 +131,7 @@ export default function Middle({
     // if folder matches then  folder + notes is
     if (matchingFolders.length > 0) {
       return (
-        <div
-          ref={containerRef}
-          className="h-screen w-middle p-4 border-r overflow-y-auto font-name"
-        >
+        <div className="h-screen w-middle p-4 border-r overflow-y-auto font-name">
           <h2 className="text-2xl font-semibold">Folders</h2>
 
           {matchingFolders.map((folder) => (
@@ -238,18 +185,8 @@ export default function Middle({
   }
 
   return (
-    <div
-      className="
-        h-screen 
-        w-middle
-        p-4
-        border-r border-border
-        flex flex-col gap-5
-        font-name
-  overflow-y-auto
-      "
-    >
-      <h2 className="text-2xl font-semibold">{folderName || "Notes"}</h2>
+    <div className="h-full w-middle p-4 border-r border-border flex flex-col gap-5 font-name overflow-y-auto">
+      <h2 className="text-2xl font-semibold">{folderName}</h2>
       {/* notes List */}
       <NotesList
         notes={notes}
@@ -257,9 +194,11 @@ export default function Middle({
         selectedNoteId={selectedNoteId}
         setSelectedNoteId={setSelectedNoteId}
       />
-      {loading && (
-        <div className="text-center text-sm opacity-60">Loading notes...</div>
-      )}
+      <div ref={loaderRef} className="flex justify-center py-4">
+        {loading && (
+          <div className="text-gray-400 text-sm">Loading notes...</div>
+        )}
+      </div>
     </div>
   );
 }
