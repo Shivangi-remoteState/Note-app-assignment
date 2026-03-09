@@ -1,4 +1,5 @@
 import NoteMenu from "./NoteMenu";
+import { useEffect } from "react";
 interface NoteHeaderProps {
   title: string;
   setTitle: (value: string) => void;
@@ -22,8 +23,22 @@ const NoteHeader = ({
   toggleArchived,
   handleDelete,
 }: NoteHeaderProps) => {
+  useEffect(() => {
+    const handleWindowClick = () => {
+      setMenuOpen(false);
+    };
+
+    if (menuOpen) {
+      window.addEventListener("click", handleWindowClick);
+    }
+
+    return () => {
+      window.removeEventListener("click", handleWindowClick);
+    };
+  }, [menuOpen]);
+
   return (
-    <div className="flex  justify-between pb-8 ">
+    <div className="flex justify-between relative pb-8 ">
       {/* title */}
       <div className="flex items-center gap-2 w-full">
         <input
@@ -36,7 +51,12 @@ const NoteHeader = ({
         {isFavorite && <span className="text-yellow-400">★</span>}
       </div>
 
-      <button onClick={() => setMenuOpen(!menuOpen)}>
+      <button
+        onClick={(e) => {
+          e.stopPropagation();
+          setMenuOpen(!menuOpen);
+        }}
+      >
         <img src="/images/Frame 1.svg" alt="menu icon" />
       </button>
 
@@ -47,6 +67,7 @@ const NoteHeader = ({
           isArchived={isArchived}
           toggleArchive={toggleArchived}
           handleDelete={handleDelete}
+          closeMenu={() => setMenuOpen(false)}
         />
       )}
     </div>

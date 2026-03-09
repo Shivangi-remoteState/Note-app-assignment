@@ -1,6 +1,7 @@
 import { ChevronDown, Folder as FolderIcon } from "lucide-react";
 
 import type Folder from "../../types/api";
+import { useEffect } from "react";
 
 interface FolderSelectorProps {
   folders: Folder[];
@@ -16,6 +17,19 @@ const FolderSelector = ({
   setFolderDropdownOpen,
   handleFolderChange,
 }: FolderSelectorProps) => {
+  useEffect(() => {
+    const handleWindowClick = () => {
+      setFolderDropdownOpen(false);
+    };
+
+    if (folderDropdownOpen) {
+      window.addEventListener("click", handleWindowClick);
+    }
+
+    return () => {
+      window.removeEventListener("click", handleWindowClick);
+    };
+  }, [folderDropdownOpen]);
   return (
     <div className="flex items-center gap-18 relative">
       <div className="flex items-center gap-2">
@@ -23,7 +37,7 @@ const FolderSelector = ({
         <span className="text-sm opacity-70">Folder</span>
       </div>
 
-      <div className="relative">
+      <div className="relative" onClick={(e) => e.stopPropagation()}>
         <div
           onClick={() => setFolderDropdownOpen(!folderDropdownOpen)}
           className="flex items-center gap-1 cursor-pointer"
@@ -36,7 +50,7 @@ const FolderSelector = ({
         </div>
 
         {folderDropdownOpen && (
-          <div className="absolute top-6 left-0 w-44 bg-[#1c1c1c] border border-white/10 rounded-md shadow-lg z-50">
+          <div className="absolute top-7 left-7 w-44 h-63 bg-[#1c1c1c] border border-white/10 rounded-md shadow-lg z-50 overflow-y-auto">
             {folders.map((folder) => (
               <div
                 key={folder.id}

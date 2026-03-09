@@ -1,10 +1,12 @@
 import { Star, Archive, Trash2 } from "lucide-react";
+
 interface NoteMenuProps {
   isFavorite: boolean;
   toggleFavorite: () => void;
   isArchived: boolean;
   toggleArchive: () => void;
   handleDelete: () => void;
+  closeMenu: () => void;
 }
 const NoteMenu = ({
   isFavorite,
@@ -12,7 +14,17 @@ const NoteMenu = ({
   isArchived,
   toggleArchive,
   handleDelete,
+  closeMenu,
 }: NoteMenuProps) => {
+  const handleFavorite = () => {
+    toggleFavorite();
+    closeMenu();
+  };
+
+  const handleArchive = () => {
+    toggleArchive();
+    closeMenu();
+  };
   return (
     <div
       className="
@@ -22,10 +34,11 @@ const NoteMenu = ({
         p-3
         z-50
       "
+      onClick={(e) => e.stopPropagation()}
     >
       <div className="border-b border-white/20 pb-2">
         <button
-          onClick={toggleFavorite}
+          onClick={handleFavorite}
           className="flex items-center gap-3 px-3 py-2 hover:bg-white/10 rounded"
         >
           <Star size={16} className={isFavorite ? "text-yellow-400" : ""} />
@@ -33,7 +46,7 @@ const NoteMenu = ({
         </button>
 
         <button
-          onClick={toggleArchive}
+          onClick={handleArchive}
           className="flex items-center gap-3 px-3 py-2 "
         >
           <Archive size={16} />{" "}
