@@ -59,7 +59,7 @@ const NoteHeader = ({
           setMenuOpen(!menuOpen);
         }}
       >
-        <img src="/images/Frame 1.svg" alt="menu icon" className="logo" />
+        <img src="/images/MenuBtn.svg" alt="menu icon" className="logo" />
       </button>
 
       {menuOpen && (
