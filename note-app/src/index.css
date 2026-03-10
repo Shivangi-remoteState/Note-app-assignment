@@ -1,14 +1,117 @@
 @import "tailwindcss";
-@theme {
-  --color-sidebar: #0e0e0e;
-  --color-hoverFile: #312eb5;
-  /* --color-border: */
-  --color-card: #232323;
-  /* rightbackgr */
-  --color-right-bg: #5c5c5c;
-  /* --color-card-active-bg: rgba(200, 255, 255, 0.1); */
-  --color-noteMenu: #333333;
+:root {
+  --color-sidebar: #f5f3f3;
+  --color-text: #111;
+  --color-card: #f5f2f2;
+  --color-right: #f5f2f2;
+  --color-middle-back: #ffffff;
+  --color-newNoteBtnBg: #111111;
+  --color-textNewNoteBtn: #ffffff;
+  /* --color-hoverFile: #e0e7ff; */
+  --color-hoverFile: #3b82f6;
 
+  --color-borderWhite5: rgba(0, 0, 0, 0.05);
+
+  --color-blue-500: #3b82f6;
+
+  --color-white-60: rgba(0, 0, 0, 0.6);
+
+  --color-text: #111827;
+  --color-gray-400: #6b7280;
+  --color-gray-300: #9ca3af;
+
+  --color-light: #6b7280;
+  --color-border: #e5e5e5;
+  --color-noteContent: #ffffff;
+  --color-folderDropdown: #f7f7f7;
+  --color-white-10: rgba(0, 0, 0, 0.1);
+  --color-white-20: rgba(0, 0, 0, 0.1);
+  --color-transparent: transparent;
+  --color-placeholder: #6b7280;
+
+  --color-yellow-400: #facc15;
+  --color-noteMenu: #f7f7f7;
+
+  --color-white-60: rgba(0, 0, 0, 0.6);
+  --color-yellow-400: #facc15;
+  --color-yellow-500: #eab308;
+
+  --color-red-500: #ef4444;
+  --color-red-600: #dc2626;
+
+  --color-indigo-600: #4f46e5;
+  --color-indigo-500: #6366f1;
+  --color-indigo-50: #6366f1;
+  --color-cancel: #f3f4f6;
+  --color-cancelHover: #e5e7eb;
+  /* typing */
+  --color-yellow-500-10: rgba(234, 179, 8, 0.15);
+  --color-yellow-400: #ca8a04;
+
+  /* saving */
+  --color-blue-500-10: rgba(59, 130, 246, 0.15);
+  --color-blue-400: #2563eb;
+
+  /* saved */
+  --color-green-500-10: rgba(34, 197, 94, 0.15);
+  --color-green-400: #16a34a;
+
+  /* idle */
+  --color-gray-500-10: rgba(107, 114, 128, 0.15);
+
+  --color-confirmDeletebg: #ffffff;
+}
+.dark {
+  --color-sidebar: #0e0e0e;
+  --color-text: #ffffff;
+  --color-card: #232323;
+  --color-newNoteBtnBg: #232323;
+  --color-right: #0e0e0e;
+  --color-middle-back: #1f1f1f;
+  --color-noteMenu: #333333;
+  --color-hoverFile: #312eb5;
+  --color-borderWhite5: rgba(255, 255, 255, 0.05);
+  --color-white-60: rgba(255, 255, 255, 0.6);
+  --color-white-10: rgba(255, 255, 255, 0.1);
+  --color-white-20: rgba(255, 255, 255, 0.2);
+  --color-yellow-500: #eab308;
+  --color-yellow-400: #facc15;
+  --color-gray-300: #d1d5db;
+  --color-blue-500: #3b82f6;
+  --color-indigo-600: #4f46e5;
+  --color-indigo-500: #6366f1;
+  --color-yellow-500-10: #eab3081a;
+  --color-yellow-400: #facc15;
+  --color-red-500: #ef4444;
+  --color-red-600: #dc2626;
+  --color-transparent: transparent;
+  --color-blue-500: #3b82f6;
+  --color-confirmDeletebg: #1e1e1e;
+  --color-cancel: #2a2a2a;
+  --color-cancelHover: #333;
+
+  --color-border: #2a2a2a;
+  --color-yellow-500-10: rgba(234, 179, 8, 0.1);
+  --color-yellow-400: #facc15;
+
+  --color-blue-500-10: rgba(59, 130, 246, 0.1);
+  --color-blue-400: #60a5fa;
+
+  --color-green-500-10: rgba(34, 197, 94, 0.1);
+  --color-green-400: #4ade80;
+
+  --color-gray-500-10: rgba(107, 114, 128, 0.1);
+  --color-gray-400: #9ca3af;
+  --color-folderDropdown: #1c1c1c;
+}
+.logo {
+  filter: invert(1);
+}
+
+.dark .logo {
+  filter: invert(0);
+}
+@theme {
   --font-nowted: "Kaushan Script";
   --font-name: "Source Sans Pro";
   --font-regular-weight: 400px;
@@ -21,8 +124,6 @@
 
   --text-base: 16px;
   --text-restore: 28px;
-
-  --color-border: #2a2a2a;
 
   --text-title-size: 16px;
 }

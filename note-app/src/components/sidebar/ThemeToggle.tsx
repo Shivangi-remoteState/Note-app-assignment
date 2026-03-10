@@ -1,22 +1,23 @@
 import { Sun, Moon } from "lucide-react";
+import { useTheme } from "../../context/ThemeContext";
 
-interface Props {
-  theme: string;
-  toggleTheme: () => void;
-}
-
-const ThemeToggle = ({ theme, toggleTheme }: Props) => {
+const ThemeToggle = () => {
+  const { theme, toggleTheme } = useTheme();
   return (
     <div onClick={toggleTheme}>
       {theme === "dark" ? (
-        <div className="flex justify-center items-center gap-2 hover:opacity-65">
-          <Sun size={18} className="text-yellow-500" />
-          <span className="text-em font-name">Light Mode</span>
+        <div className="flex justify-center items-center gap-2 hover:text-[var(--color-blue-500)">
+          <Sun size={18} className="text-[var(--color-yellow-500)]" />
+          <span className="text-em font-name text-[var(--color-text)]">
+            Light Mode
+          </span>
         </div>
       ) : (
-        <div className="flex justify-center items-center gap-2 hover:opacity-65">
-          <Moon size={18} className="text-blue-500" />
-          <span className="text-em font-name">Dark Mode</span>
+        <div className="flex justify-center items-center gap-2 hover:text-[var(--color-blue-500)">
+          <Moon size={18} className="text-[var(--color-blue-500)]" />
+          <span className="text-em font-name text-[var(--color-text)]">
+            Dark Mode
+          </span>
         </div>
       )}
     </div>

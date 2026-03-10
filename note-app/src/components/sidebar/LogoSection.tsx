@@ -1,21 +1,22 @@
 import { Search } from "lucide-react";
 interface Props {
-  theme: string;
   toggleSearch: () => void;
 }
 
-const LogoSection = ({ theme, toggleSearch }: Props) => {
+const LogoSection = ({ toggleSearch }: Props) => {
   return (
     <div className="flex items-center justify-between ">
-      <div className="flex items-center ">
+      <div className="flex items-center">
         <img
           src="/images/Nowted.svg"
-          className={`w-20 ${theme === "light" ? "brightness-0" : ""}`}
+          className="w-20 logo"
+          // className={`w-20 ${theme === "light" ? "brightness-0" : ""}`}
         />
         {/* <div className="font-nowted">Nowted</div> */}
         <img
           src="/images/Frame.svg"
-          className={`w-3 ${theme === "light" ? "brightness-0" : ""}`}
+          className="w-3 logo"
+          // className={`w-3 ${theme === "light" ? "brightness-0" : ""}`}
         />
       </div>
 

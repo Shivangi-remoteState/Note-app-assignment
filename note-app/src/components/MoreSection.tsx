@@ -14,8 +14,8 @@ const MoreSection = () => {
           className={`flex items-center gap-3 px-2 py-1 rounded cursor-pointer
           ${
             location.pathname === "/favorites"
-              ? "bg-hoverFile"
-              : "hover:bg-hoverFile"
+              ? "bg-[var(--color-hoverFile)]"
+              : "hover:bg-[var(--color-hoverFile)]"
           }`}
           onClick={() => navigate("/favorites")}
         >
@@ -29,8 +29,8 @@ const MoreSection = () => {
           className={`flex items-center gap-3 px-2 py-1 rounded cursor-pointer
           ${
             location.pathname === "/trash"
-              ? "bg-hoverFile"
-              : "hover:bg-hoverFile"
+              ? "bg-[var(--color-hoverFile)]"
+              : "hover:bg-[var(--color-hoverFile)]"
           }`}
           onClick={() => navigate("/trash")}
         >
@@ -44,8 +44,8 @@ const MoreSection = () => {
           className={`flex items-center gap-3 px-2 py-1 rounded cursor-pointer
           ${
             location.pathname === "/archived"
-              ? "bg-hoverFile"
-              : "hover:bg-hoverFile"
+              ? "bg-[var(--color-hoverFile)]"
+              : "hover:bg-[var(--color-hoverFile)]"
           }`}
           onClick={() => navigate("/archived")}
         >

@@ -4,26 +4,22 @@ import Right from "../components/NotePanel/Right";
 import EmptyNote from "../components/EmptyNote";
 import { Routes, Route } from "react-router-dom";
 import { SearchProvider } from "../context/SearchContext";
-import { useState } from "react";
 
 const Home = () => {
-  const [theme, setTheme] = useState("dark");
-  function toggleTheme() {
-    setTheme(theme === "dark" ? "light" : "dark");
-  }
   return (
     <SearchProvider>
       <div
-        className={`flex h-screen w-full ${
-          theme === "dark" ? "bg-black text-white" : "bg-white text-black"
-        }`}
+        className="flex h-screen w-full bg-black text-white"
+        // className={`flex h-screen w-full ${
+        //   theme === "dark" ? "bg-black text-white" : "bg-white text-black"
+        // }`}
       >
         <Routes>
           <Route
             path="/"
             element={
               <>
-                <Left theme={theme} toggleTheme={toggleTheme} />
+                <Left />
                 <Middle />
                 <EmptyNote />
               </>
@@ -33,7 +29,7 @@ const Home = () => {
             path="/favorites"
             element={
               <>
-                <Left theme={theme} toggleTheme={toggleTheme} />
+                <Left />
                 <Middle isFavoritesPage={true} />
                 <EmptyNote />
               </>
@@ -43,7 +39,7 @@ const Home = () => {
             path="/archived"
             element={
               <>
-                <Left theme={theme} toggleTheme={toggleTheme} />
+                <Left />
                 <Middle isArchivedPage={true} />
                 <EmptyNote />
               </>
@@ -53,7 +49,7 @@ const Home = () => {
             path="/trash/note/:noteId"
             element={
               <>
-                <Left theme={theme} toggleTheme={toggleTheme} />
+                <Left />
                 <Middle isTrashPage={true} />
                 <Right isTrashMode={true} />
               </>
@@ -64,7 +60,7 @@ const Home = () => {
             path="/trash"
             element={
               <>
-                <Left theme={theme} toggleTheme={toggleTheme} />
+                <Left />
                 <Middle isTrashPage={true} />
                 <EmptyNote />
               </>
@@ -75,7 +71,7 @@ const Home = () => {
             path="folder/:folderId/*"
             element={
               <>
-                <Left theme={theme} toggleTheme={toggleTheme} />
+                <Left />
                 <Routes>
                   {/* folder open then middle + right*/}
                   <Route

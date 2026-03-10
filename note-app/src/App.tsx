@@ -8,7 +8,7 @@ const App = () => {
   return (
     <BrowserRouter>
       <Toaster
-        position="top-right"
+        position="top-center"
         expand
         richColors
         theme="dark"

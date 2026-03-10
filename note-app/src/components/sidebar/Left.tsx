@@ -12,13 +12,9 @@ import ThemeToggle from "./ThemeToggle";
 import NewNoteButton from "./NewNoteButton";
 import ConfirmDelete from "../ConfirmDelete";
 import { showSuccess } from "@/utils/toast";
+// import { useTheme } from "@/context/ThemeContext";
 
-interface props {
-  theme: string;
-  toggleTheme: () => void;
-}
-
-export default function Left({ theme, toggleTheme }: props) {
+export default function Left() {
   const [folders, setFolders] = useState<Folder[]>([]);
   const [showInputBoxFolder, setShowInputBoxFolder] = useState(false);
   const [folderName, setFolderName] = useState("");
@@ -130,12 +126,9 @@ export default function Left({ theme, toggleTheme }: props) {
     return () => clearTimeout(timer);
   }, [searchInpText, setQuery]);
   return (
-    <div className="w-sidebar h-screen px-4 py-5 flex flex-col gap-gap font-name">
+    <div className="w-sidebar h-screen px-4 py-5 flex flex-col gap-gap font-name bg-[var(--color-sidebar)] text-[var(--color-text)]">
       {/* logo section */}
-      <LogoSection
-        theme={theme}
-        toggleSearch={() => setShowSearch(!showSearch)}
-      />
+      <LogoSection toggleSearch={() => setShowSearch(!showSearch)} />
 
       {showSearch && (
         <input
@@ -143,15 +136,15 @@ export default function Left({ theme, toggleTheme }: props) {
           value={searchInpText}
           onChange={(e) => setSearchInpText(e.target.value)}
           placeholder="Search notes or folders..."
-          className={`w-full px-3 py-2 rounded font-name ${
-            theme === "dark" ? "bg-card text-white" : "bg-gray-300 text-black"
-          }`}
+          className="w-full px-3 py-2 rounded font-name bg-[var(--color-card)] text-[var(--color-text)] border border-[var(--color-border)] placeholder-[var(--color-gray-400)]"
+          // className={`w-full px-3 py-2 rounded font-name ${
+          //   theme === "dark" ? "bg-card text-white" : "bg-gray-300 text-black"
+          // }`}
         />
       )}
 
       {/* new note*/}
       <NewNoteButton
-        theme={theme}
         onClick={() => navigate(`/folder/${currentFolderId}/new`)}
       />
 
@@ -161,12 +154,14 @@ export default function Left({ theme, toggleTheme }: props) {
       {/* Folders */}
       <div className="flex flex-col gap-2 py-1 px-2 ">
         <div className="flex items-center justify-between gap-1">
-          <div className="text-sm font-semibold">Folders</div>
+          <div className="text-sm font-semibold text-[var(--color-text)]">
+            Folders
+          </div>
           <button
             className="opacity-80"
             onClick={() => setShowInputBoxFolder(true)}
           >
-            <FolderPlus size={16} />
+            <FolderPlus size={16} className="text-[var(--color-text)]" />
           </button>
         </div>
         {showInputBoxFolder && (
@@ -176,12 +171,12 @@ export default function Left({ theme, toggleTheme }: props) {
               value={folderName}
               onChange={(e) => setFolderName(e.target.value)}
               placeholder="Enter folder name"
-              className="border px-2 py-1 font-name text-sm"
+              className="border border-[var(--color-border)] bg-[var(--color-card)] px-2 py-1 font-name text-sm text-[var(--color-text)]"
             />
             <button
               onClick={handleCreateFolder}
               disabled={loading}
-              className="bg-blue-500 text-white px-2 py-1 rounded text-sm"
+              className="bg-[var(--color-blue-500)] hover:bg-[var(--color-blue-600)] text-white px-2 py-1 rounded text-sm"
             >
               Save
             </button>
@@ -205,7 +200,7 @@ export default function Left({ theme, toggleTheme }: props) {
         <MoreSection />
       </div>
       {/* theme button */}
-      <ThemeToggle theme={theme} toggleTheme={toggleTheme} />
+      <ThemeToggle />
       {folderToDelete && (
         <ConfirmDelete
           title="Delete Folder"

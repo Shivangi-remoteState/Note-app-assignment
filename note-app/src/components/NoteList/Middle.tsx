@@ -7,6 +7,7 @@ import { useSearch } from "../../context/SearchContext";
 import { useNotes } from "@/context/NotesContext";
 import NotesList from "./NotesList";
 import useFolder from "@/hooks/useFolder";
+// import { useTheme } from "@/context/ThemeContext";
 
 // fetchingnote from selected folder fromleft
 export default function Middle({
@@ -131,12 +132,15 @@ export default function Middle({
     // if folder matches then  folder + notes is
     if (matchingFolders.length > 0) {
       return (
-        <div className="h-screen w-middle p-4 border-r overflow-y-auto font-name">
-          <h2 className="text-2xl font-semibold">Folders</h2>
-
+        <div className="h-screen w-middle p-4 border-r border-[var(--color-border)] overflow-y-auto font-name bg-[var(--color-middle-back)] text-[var(--color-text)]">
+          <h2 className="text-2xl font-semibold text-[var(--color-text)]">
+            Folders
+          </h2>
           {matchingFolders.map((folder) => (
             <div key={folder.id} className="pt-5">
-              <h3 className="text-xl font-semibold mb-3">{folder.name}</h3>
+              <h3 className="text-xl font-semibold pb-3 text-[var(--color-text)]">
+                {folder.name}
+              </h3>
 
               {allSearchNote
                 .filter((note) => note.folderId === folder.id)
@@ -163,13 +167,12 @@ export default function Middle({
 
     // Only notes match
     return (
-      <div className="h-screen w-middle p-4 border-r overflow-y-auto font-name">
+      <div className="h-screen w-middle p-4 border-r border-[var(--color-border)] overflow-y-auto font-name bg-[var(--color-middle-back)] text-[var(--color-text)]">
         <h2 className="text-2xl font-semibold">Search Results</h2>
-
         {matchingNotes.map((note) => (
           <div
             key={note.id}
-            className="pt-4"
+            className="pt-4 cursor-pointer"
             onClick={() => navigate(`/folder/${note.folderId}/note/${note.id}`)}
           >
             <Card
@@ -185,7 +188,7 @@ export default function Middle({
   }
 
   return (
-    <div className="h-full w-middle p-4 border-r border-border flex flex-col gap-5 font-name overflow-y-auto">
+    <div className="h-full w-middle p-4 border-r border-[var(--color-border)] flex flex-col gap-5 font-name bg-[var(--color-middle-back)] text-[var(--color-text)] overflow-y-auto">
       <h2 className="text-2xl font-semibold">{folderName}</h2>
       {/* notes List */}
       <NotesList
@@ -196,7 +199,9 @@ export default function Middle({
       />
       <div ref={loaderRef} className="flex justify-center py-4">
         {loading && (
-          <div className="text-gray-400 text-sm">Loading notes...</div>
+          <div className="text-[var(--color-gray-400)] text-sm">
+            Loading notes...
+          </div>
         )}
       </div>
     </div>

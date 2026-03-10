@@ -17,7 +17,7 @@ const RecentNotes = ({ recentNotes }: Props) => {
 
       <div className="flex flex-col gap-1">
         {recentNotes.length === 0 && (
-          <div className="text-xs px-2 text-gray-400">
+          <div className="text-xs px-2 text-[var(--color-400)]">
             No recent notes available
           </div>
         )}
@@ -26,7 +26,7 @@ const RecentNotes = ({ recentNotes }: Props) => {
           <div
             key={note.id}
             className={`flex gap-2 items-center font-name py-1 px-2 rounded cursor-pointer 
-  ${noteId === note.id ? "bg-hoverFile" : "hover:bg-hoverFile"}
+  ${noteId === note.id ? "bg-[var(--color-hoverFile)]" : "hover:bg-[var(--color-hoverFile)]"}
 `}
             onClick={() => navigate(`/folder/${note.folderId}/note/${note.id}`)}
           >

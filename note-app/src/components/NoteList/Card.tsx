@@ -25,17 +25,17 @@ export default function NoteItem({
   return (
     <div
       className={`
-        w-full p-4 border border-white/5 cursor-pointer 
-        bg-card font-name rounded-lg
-        ${isActive ? "bg-hoverFile border-blue-500" : "hover:bg-hoverFile"}
+        w-full p-4 border border-[var(--color-borderWhite5)] cursor-pointer 
+        bg-[var(--color-card)] font-name rounded-lg
+        ${isActive ? "bg-[var(--color-hoverFile)] border-[var(--color-blue-500)]" : "hover:bg-[var(--color-hoverFile)]"}
       `}
     >
-      <h1 className="text-title text-xl text-white font-semibold truncate">
+      <h1 className="text-title text-xl text-text font-semibold truncate">
         {title}
       </h1>
       <div className="text-white/60 flex items-center gap-8 pt-1">
         <span className="text-title text-light">{formatDate(date)}</span>
-        <p className="text-sm text-white/60 font-semibold truncate">
+        <p className="text-sm text-[var(--color-white-60)] font-semibold truncate">
           {preview}
         </p>
       </div>
