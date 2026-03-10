@@ -33,7 +33,7 @@ export default function NoteItem({
       <h1 className="text-title text-xl text-text font-semibold truncate">
         {title}
       </h1>
-      <div className="text-white/60 flex items-center gap-8 pt-1">
+      <div className="text-[var(--color-white-60)] flex items-center gap-8 pt-1">
         <span className="text-title text-light">{formatDate(date)}</span>
         <p className="text-sm text-[var(--color-white-60)] font-semibold truncate">
           {preview}
