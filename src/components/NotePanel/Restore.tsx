@@ -19,24 +19,21 @@ const Restore = ({ noteTitle, noteId }: RestoreProps) => {
     }
   }
   return (
-    <div className="flex flex-col justify-center items-center h-full w-right gap-2 bg-[var(--color-sidebar)]">
+    <div className="flex flex-col justify-center items-center h-full w-right gap-2 bg-(--color-sidebar)">
       <div>
-        <RotateCcw
-          className="w-16 h-16 text-[var(--color-gray-300)]"
-          strokeWidth={0.5}
-        />
+        <RotateCcw className="w-16 h-16 text-gray-300" strokeWidth={0.5} />
       </div>
-      <h1 className="text-xl  font-semibold font-name text-restore text-[var(--color-text)]">
+      <h1 className="text-xl  font-semibold font-name text-restore text-(--color-text)">
         Restore “{noteTitle}”
       </h1>
-      <p className="text-[var(--color-white-60)] text-base font-name max-w-md text-center ">
+      <p className="text-(--color-white-60) text-base font-name max-w-md text-center ">
         Don’t want to lose this note? It’s not too late! Just click the
         “Restore” button and it will be added back to your list. It’s that
         simple.
       </p>
       <button
         onClick={handleRestore}
-        className="bg-[var(--color-indigo-600)] hover:bg-[var(--color-indigo-50)] px-6 py-2 rounded-md transition duration-200"
+        className="bg-indigo-600 hover:bg-indigo-50 px-6 py-2 rounded-md transition duration-200"
       >
         Restore
       </button>

@@ -29,17 +29,17 @@ const NoteMenu = ({
     <div
       className="
         absolute right-0 top-14
-        bg-[var(--color-noteMenu)]
+        bg-(--color-noteMenu)
         rounded
         p-3
         z-50
       "
       onClick={(e) => e.stopPropagation()}
     >
-      <div className="border-b border-[var(--color-white-20)] pb-2">
+      <div className="border-b border-(--color-white-20) pb-2">
         <button
           onClick={handleFavorite}
-          className="flex items-center gap-3 px-3 py-2 hover:bg-[var(--color-white-10)] rounded"
+          className="flex items-center gap-3 px-3 py-2 hover:bg-(--color-white-10) rounded"
         >
           <Star size={16} className={isFavorite ? "text-yellow-400" : ""} />
           {isFavorite ? "Remove from Favourites" : "Add to Favourites"}

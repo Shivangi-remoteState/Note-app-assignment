@@ -38,13 +38,13 @@ const FolderSection = ({
             });
           }}
           className={`flex items-center justify-between group gap-3 px-2 py-1 rounded cursor-pointer
-${currentFolderId === folder.id ? "bg-[var(--color-hoverFile)]" : "hover:bg-[var(--color-hoverFile)]"}`}
+${currentFolderId === folder.id ? "bg-(--color-hoverFile)" : "hover:bg-(--color-hoverFile)"}`}
         >
           <div className="flex gap-3 flex-1 min-w-0">
             {currentFolderId === folder.id ? (
               <FolderOpen size={18} />
             ) : (
-              <FolderIcon size={18} className="text-[var(--color-text)]" />
+              <FolderIcon size={18} className="text-(--color-text)" />
             )}
             {/* <div className="text-sm hover:text-base">
                   {folder?.name || "Untitled"}
@@ -64,7 +64,7 @@ ${currentFolderId === folder.id ? "bg-[var(--color-hoverFile)]" : "hover:bg-[var
                     setEditFolderName("");
                   }
                 }}
-                className="text-sm bg-[var(--color-transparent)] border border-[var(--color-border)] text-[var(--color-text)]"
+                className="text-sm bg-(--color-transparent) border border-(--color-border) text-(--color-text)"
               />
             ) : (
               <div
@@ -82,7 +82,7 @@ ${currentFolderId === folder.id ? "bg-[var(--color-hoverFile)]" : "hover:bg-[var
             onClick={() => {
               deleteFolder(folder.id);
             }}
-            className="cursor-pointer hover:text-[var(--color-red-500)] opacity-0 group-hover:opacity-100"
+            className="cursor-pointer hover:text-red-500 opacity-0 group-hover:opacity-100"
           >
             <Trash2 size={18} />
           </span>

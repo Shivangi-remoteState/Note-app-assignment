@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { api } from "../../api/axios";
 import type { Folder, RecentNote } from "../../types/api";
 import { useNavigate, useParams } from "react-router-dom";
-import { useSearch } from "../../context/SearchContext";
 import LogoSection from "./LogoSection";
 import MoreSection from "../MoreSection";
 import FolderSection from "./FolderSection";
@@ -19,9 +18,9 @@ export default function Left() {
   const [showInputBoxFolder, setShowInputBoxFolder] = useState(false);
   const [folderName, setFolderName] = useState("");
   const [loading, setLoading] = useState(false);
-  const { query, setQuery } = useSearch();
+
   const [showSearch, setShowSearch] = useState(false);
-  const [searchInpText, setSearchInpText] = useState(query);
+  const [searchInpText, setSearchInpText] = useState("");
 
   const [editedFolderId, setEditedFolderId] = useState<string | null>(null);
   const [editFoldername, setEditFolderName] = useState("");
@@ -120,63 +119,75 @@ export default function Left() {
   //  debouncing
   useEffect(() => {
     const timer = setTimeout(() => {
-      setQuery(searchInpText);
-    }, 500);
+      const value = searchInpText.trim();
+
+      if (value === "") {
+        navigate(window.location.pathname);
+      } else {
+        navigate(`${window.location.pathname}?q=${value}`);
+      }
+    }, 400);
 
     return () => clearTimeout(timer);
-  }, [searchInpText, setQuery]);
-  return (
-    <div className="w-sidebar h-screen px-4 py-5 flex flex-col gap-gap font-name bg-[var(--color-sidebar)] text-[var(--color-text)]">
-      {/* logo section */}
-      <LogoSection toggleSearch={() => setShowSearch(!showSearch)} />
+  }, [searchInpText]);
 
+  return (
+    <div className="w-sidebar h-screen px-4 py-5 flex flex-col gap-gap font-name bg-(--color-sidebar) text-(--color-text)">
+      {/* logo section */}
+      <LogoSection
+        toggleSearch={() => {
+          const next = !showSearch;
+          setShowSearch(next);
+
+          if (!next) {
+            setSearchInpText("");
+            navigate(window.location.pathname);
+          }
+        }}
+      />{" "}
       {showSearch && (
         <input
+          autoFocus
           type="text"
           value={searchInpText}
           onChange={(e) => setSearchInpText(e.target.value)}
-          placeholder="Search notes or folders..."
-          className="w-full px-3 py-2 rounded font-name bg-[var(--color-card)] text-[var(--color-text)] border border-[var(--color-border)] placeholder-[var(--color-gray-400)]"
-          // className={`w-full px-3 py-2 rounded font-name ${
-          //   theme === "dark" ? "bg-card text-white" : "bg-gray-300 text-black"
-          // }`}
+          placeholder="Search notes..."
+          className="w-full px-3 py-2 rounded font-name bg-(--color-card) text-(--color-text) border border-(--color-border)"
         />
       )}
-
       {/* new note*/}
       <NewNoteButton
         onClick={() => navigate(`/folder/${currentFolderId}/new`)}
       />
-
       {/* recent */}
       <RecentNotes recentNotes={recentNotes} />
-
       {/* Folders */}
       <div className="flex flex-col gap-2 py-1 px-2 flex-1 min-h-0">
         <div className="flex items-center justify-between gap-1">
-          <div className="text-sm font-semibold text-[var(--color-text)]">
+          <div className="text-sm font-semibold text-(--color-text)">
             Folders
           </div>
           <button
             className="opacity-80"
             onClick={() => setShowInputBoxFolder(true)}
           >
-            <FolderPlus size={16} className="text-[var(--color-text)]" />
+            <FolderPlus size={16} className="text-(--color-text)" />
           </button>
         </div>
         {showInputBoxFolder && (
           <div className="flex items-center gap-2">
             <input
+              autoFocus
               type="text"
               value={folderName}
               onChange={(e) => setFolderName(e.target.value)}
               placeholder="Enter folder name"
-              className="border border-[var(--color-border)] bg-[var(--color-card)] px-2 py-1 font-name text-sm text-[var(--color-text)]"
+              className="border border-(--color-border) bg-(--color-card) px-2 py-1 font-name text-sm text-(--color-text)"
             />
             <button
               onClick={handleCreateFolder}
               disabled={loading}
-              className="bg-[var(--color-blue-500)] hover:bg-[var(--color-blue-600)] text-white px-2 py-1 rounded text-sm"
+              className="bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded text-sm"
             >
               Save
             </button>

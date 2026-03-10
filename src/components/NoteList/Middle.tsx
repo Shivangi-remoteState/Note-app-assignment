@@ -1,14 +1,12 @@
 import { useEffect, useState, useRef } from "react";
 import { api } from "../../api/axios";
-import type { Note, Folder } from "../../types/api";
+import type { Note } from "../../types/api";
 import Card from "./Card";
 import { useNavigate, useParams } from "react-router-dom";
-import { useSearch } from "../../context/SearchContext";
 import { useNotes } from "@/context/NotesContext";
 import NotesList from "./NotesList";
 import useFolder from "@/hooks/useFolder";
-// import { useTheme } from "@/context/ThemeContext";
-
+import { useSearchParams } from "react-router-dom";
 // fetchingnote from selected folder fromleft
 export default function Middle({
   isFavoritesPage = false,
@@ -17,7 +15,10 @@ export default function Middle({
 }) {
   const { folderId } = useParams();
   const navigate = useNavigate();
-  const { query } = useSearch();
+
+  const [searchParams] = useSearchParams();
+  const query = searchParams.get("q") || "";
+
   const [notes, setNotes] = useState<Note[]>([]);
   const { refreshTrigger } = useNotes();
   const loaderRef = useRef<HTMLDivElement | null>(null);
@@ -27,11 +28,12 @@ export default function Middle({
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
 
+  const [searchResults, setSearchResults] = useState<Note[]>([]);
   async function loadNotes(pageNumber = 1) {
     try {
       setLoading(true);
       let url = `/notes?page=${pageNumber}&limit=10`;
-      // if folder note
+
       if (folderId) {
         url += `&folderId=${folderId}`;
       }
@@ -103,69 +105,36 @@ export default function Middle({
   }
 
   // search
-  const [allSearchNote, setAllSearchNotes] = useState<Note[]>([]);
-  const [allSearchFolders, setAllSearchFolders] = useState<Folder[]>([]);
-
   useEffect(() => {
-    if (query.trim() === "") return;
+    const timer = setTimeout(() => {
+      if (!query.trim()) return;
 
-    async function loadSearchData() {
-      setAllSearchFolders(folders);
+      async function searchNotes() {
+        try {
+          const response = await api.get(`/notes?search=${query}&limit=50`);
+          setSearchResults(response.data.notes);
+        } catch (error) {
+          console.log("Search error:", error);
+        }
+      }
 
-      const responseNote = await api.get("/notes?deleted=false&limit=500");
-      setAllSearchNotes(responseNote.data.notes);
-    }
+      searchNotes();
+    }, 400);
 
-    loadSearchData();
+    return () => clearTimeout(timer);
   }, [query]);
   if (query.trim() !== "") {
-    const q = query.toLowerCase();
-
-    const matchingFolders = allSearchFolders.filter((f) =>
-      f.name.toLowerCase().includes(q),
-    );
-
-    const matchingNotes = allSearchNote.filter((n) =>
-      (n.title?.toLowerCase() || "").includes(q),
-    );
-
-    // if folder matches then  folder + notes is
-    if (matchingFolders.length > 0) {
-      return (
-        <div className="h-screen w-middle p-4 border-r border-[var(--color-border)] overflow-y-auto font-name bg-[var(--color-middle-back)] text-[var(--color-text)]">
-          <h2 className="text-2xl font-semibold text-[var(--color-text)]">
-            Folders
-          </h2>
-          {matchingFolders.map((folder) => (
-            <div key={folder.id} className="pt-5">
-              <h3 className="text-xl font-semibold pb-3 text-[var(--color-text)]">
-                {folder.name}
-              </h3>
-
-              {allSearchNote
-                .filter((note) => note.folderId === folder.id)
-                .map((note) => (
-                  <div
-                    key={note.id}
-                    className="pb-3"
-                    onClick={() =>
-                      navigate(`/folder/${note.folderId}/note/${note.id}`)
-                    }
-                  >
-                    <Card note={note} isActive={false} />
-                  </div>
-                ))}
-            </div>
-          ))}
-        </div>
-      );
-    }
-
-    // Only notes match
     return (
-      <div className="h-screen w-middle p-4 border-r border-[var(--color-border)] overflow-y-auto font-name bg-[var(--color-middle-back)] text-[var(--color-text)]">
-        <h2 className="text-2xl font-semibold">Search Results</h2>
-        {matchingNotes.map((note) => (
+      <div className="h-screen flex flex-col w-middle p-4 border-r border-(--color-border) overflow-y-auto font-name bg-(--color-middle-back)">
+        <h2 className="text-2xl font-semibold text-(--color-text)">
+          Search Results
+        </h2>
+
+        {searchResults.length === 0 && (
+          <div className="text-gray-400 pt-4">No results found</div>
+        )}
+
+        {searchResults.map((note) => (
           <div
             key={note.id}
             className="pt-4 cursor-pointer"
@@ -177,9 +146,8 @@ export default function Middle({
       </div>
     );
   }
-
   return (
-    <div className="h-full w-middle p-4 border-r border-[var(--color-border)] flex flex-col gap-5 font-name bg-[var(--color-middle-back)] text-[var(--color-text)] overflow-y-auto">
+    <div className="h-full w-middle p-4 border-r border-(--color-border) flex flex-col gap-5 font-name bg-(--color-middle-back) text-(--color-text) overflow-y-auto">
       <h2 className="text-2xl font-semibold">{folderName}</h2>
       {/* notes List */}
       <NotesList
@@ -190,9 +158,7 @@ export default function Middle({
       />
       <div ref={loaderRef} className="flex justify-center py-4">
         {loading && (
-          <div className="text-[var(--color-gray-400)] text-sm">
-            Loading notes...
-          </div>
+          <div className="text-gray-400 text-sm">Loading notes...</div>
         )}
       </div>
     </div>

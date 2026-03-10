@@ -50,12 +50,12 @@ const FolderSelector = ({
         </div>
 
         {folderDropdownOpen && (
-          <div className="absolute top-7 left-7 w-44 h-63 bg-[var(--color-folderDropdown)] border border-[var(--color-white-10)] rounded-md shadow-lg z-50 overflow-y-auto">
+          <div className="absolute top-7 left-7 w-44 h-63 bg-(--color-folderDropdown) border border-(--color-white-10) rounded-md shadow-lg z-50 overflow-y-auto">
             {folders.map((folder) => (
               <div
                 key={folder.id}
                 onClick={() => handleFolderChange(folder.id)}
-                className="px-3 py-2 text-sm cursor-pointer hover:bg-[var(--color-hoverFile)] truncate "
+                className="px-3 py-2 text-sm cursor-pointer hover:bg-(--color-hoverFile) truncate "
               >
                 {folder.name}
               </div>
