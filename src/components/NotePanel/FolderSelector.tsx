@@ -1,6 +1,6 @@
+import type { Folder } from "@/types/api";
 import { ChevronDown, Folder as FolderIcon } from "lucide-react";
 
-import type Folder from "../../types/api";
 import { useEffect } from "react";
 
 interface FolderSelectorProps {

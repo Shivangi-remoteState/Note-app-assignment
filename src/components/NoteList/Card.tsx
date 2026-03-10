@@ -1,18 +1,11 @@
+import type { Note } from "@/types/api";
+
 interface Props {
-  id: string;
-  title: string;
-  date: string;
-  preview: string;
+  note: Note;
   isActive: boolean;
 }
 
-export default function NoteItem({
-  title,
-  date,
-  preview,
-
-  isActive,
-}: Props) {
+export default function NoteItem({ note, isActive }: Props) {
   function formatDate(dateString: string) {
     const date = new Date(dateString);
     const day = String(date.getDate()).padStart(2, "0");
@@ -31,12 +24,14 @@ export default function NoteItem({
       `}
     >
       <h1 className="text-title text-xl text-text font-semibold truncate">
-        {title}
+        {note.title}
       </h1>
       <div className="text-[var(--color-white-60)] flex items-center gap-8 pt-1">
-        <span className="text-title text-light">{formatDate(date)}</span>
+        <span className="text-title text-light">
+          {formatDate(note.createdAt)}
+        </span>
         <p className="text-sm text-[var(--color-white-60)] font-semibold truncate">
-          {preview}
+          {note.preview}
         </p>
       </div>
     </div>

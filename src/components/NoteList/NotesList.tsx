@@ -38,13 +38,7 @@ const NotesList = ({
               }
             }}
           >
-            <Card
-              id={note.id}
-              title={note.title}
-              date={note.createdAt}
-              preview={note.preview}
-              isActive={selectedNoteId === note.id}
-            />
+            <Card note={note} isActive={selectedNoteId === note.id} />
           </div>
         );
       })}

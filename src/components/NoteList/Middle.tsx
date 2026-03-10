@@ -152,11 +152,7 @@ export default function Middle({
                       navigate(`/folder/${note.folderId}/note/${note.id}`)
                     }
                   >
-                    <Card
-                      title={note.title}
-                      date={note.createdAt}
-                      preview={note.preview}
-                    />
+                    <Card note={note} isActive={false} />
                   </div>
                 ))}
             </div>
@@ -175,12 +171,7 @@ export default function Middle({
             className="pt-4 cursor-pointer"
             onClick={() => navigate(`/folder/${note.folderId}/note/${note.id}`)}
           >
-            <Card
-              id={note.id}
-              title={note.title}
-              date={note.createdAt}
-              preview={note.preview}
-            />
+            <Card note={note} isActive={false} />
           </div>
         ))}
       </div>

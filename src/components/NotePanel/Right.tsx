@@ -184,7 +184,7 @@ export default function Right({
 
   // restore ui
   if (isTrashMode) {
-    return <Restore noteTitle={note?.title || ""} noteId={noteId} />;
+    return <Restore noteTitle={note?.title || ""} noteId={noteId || ""} />;
   }
   return (
     <div className="h-screen w-right py-10 px-8 text-title flex flex-col font-name bg-[var(--color-right)] text-[var(--color-text)]">
