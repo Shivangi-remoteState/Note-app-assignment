@@ -30,6 +30,7 @@ export default function Right({
   const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
   const createLock = useRef(false);
+  const initialLoad = useRef(true);
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
 
@@ -57,6 +58,8 @@ export default function Right({
     setIsFavorite(note.isFavorite);
     setIsArchived(note.isArchived);
     setSelectedFolder(note.folderId);
+
+    initialLoad.current = true;
   }, [note]);
   //  fetch folder
   useEffect(() => {
@@ -116,7 +119,14 @@ export default function Right({
   }
 
   // autosave debouncing
-  useAutoSave(title, content, selectedFolder, autoSaveNote, setSaveStatus);
+  useAutoSave(
+    title,
+    content,
+    selectedFolder,
+    autoSaveNote,
+    setSaveStatus,
+    initialLoad,
+  );
 
   // folder chsnge
   async function handleFolderChange(folderId: string) {

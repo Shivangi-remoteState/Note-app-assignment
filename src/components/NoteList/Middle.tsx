@@ -95,13 +95,13 @@ export default function Middle({
 
   // to show folderName as heading in middleportion
   const folders = useFolder();
-  let folderName = "Notes";
+  let folderName = "";
   if (isArchivedPage) folderName = "Archived Notes";
   else if (isFavoritesPage) folderName = "Favorites";
   else if (isTrashPage) folderName = "Trash";
   else if (folderId) {
     const selected = folders.find((f) => f.id === folderId);
-    folderName = selected?.name || "Notes";
+    folderName = selected?.name || "";
   }
 
   // search

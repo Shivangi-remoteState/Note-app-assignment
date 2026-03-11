@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { api } from "../api/axios";
 import type { Folder } from "../types/api";
-
+import { useParams } from "react-router-dom";
 const useFolder = () => {
   const [folders, setFolders] = useState<Folder[]>([]);
-
+  const { folderId } = useParams();
   useEffect(() => {
     async function loadFolders() {
       try {
@@ -16,7 +16,7 @@ const useFolder = () => {
     }
 
     loadFolders();
-  }, []);
+  }, [folderId]);
   return folders;
 };
 
