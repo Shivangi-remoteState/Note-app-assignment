@@ -13,6 +13,7 @@ export default function Middle({
   isArchivedPage = false,
   isTrashPage = false,
 }) {
+  const requestIdRef = useRef(0);
   const { folderId } = useParams();
   const navigate = useNavigate();
 
@@ -30,6 +31,7 @@ export default function Middle({
 
   const [searchResults, setSearchResults] = useState<Note[]>([]);
   async function loadNotes(pageNumber = 1) {
+    const requestId = requestIdRef.current;
     try {
       setLoading(true);
       let url = `/notes?page=${pageNumber}&limit=10`;
@@ -50,6 +52,7 @@ export default function Middle({
       }
 
       const response = await api.get(url);
+      if (requestId !== requestIdRef.current) return;
       const noteData = response.data.notes;
       if (pageNumber === 1) {
         setNotes(noteData);
@@ -69,18 +72,23 @@ export default function Middle({
   useEffect(() => {
     setPage(1);
     setHasMore(true);
+    requestIdRef.current++;
     loadNotes(1);
   }, [folderId, isFavoritesPage, isArchivedPage, isTrashPage, refreshTrigger]);
-
+  useEffect(() => {
+    setNotes([]);
+  }, [folderId]);
   // scrolling
   useEffect(() => {
     const observer = new IntersectionObserver((entries) => {
       const first = entries[0];
 
       if (first.isIntersecting && hasMore && !loading) {
-        const nextPage = page + 1;
-        setPage(nextPage);
-        loadNotes(nextPage);
+        setPage((prevPage) => {
+          const nextPage = prevPage + 1;
+          loadNotes(nextPage);
+          return nextPage;
+        });
       }
     });
 
@@ -91,7 +99,7 @@ export default function Middle({
     return () => {
       if (current) observer.unobserve(current);
     };
-  }, [hasMore, loading]);
+  }, [hasMore, loading, page, folderId]);
 
   // to show folderName as heading in middleportion
   const folders = useFolder();

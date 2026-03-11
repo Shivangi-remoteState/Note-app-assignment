@@ -10,7 +10,7 @@ import RecentNotes from "./RecentNotes";
 import ThemeToggle from "./ThemeToggle";
 import NewNoteButton from "./NewNoteButton";
 import ConfirmDelete from "../ConfirmDelete";
-import { showSuccess } from "@/utils/toast";
+import { showSuccess, showError } from "@/utils/toast";
 // import { useTheme } from "@/context/ThemeContext";
 
 export default function Left() {
@@ -31,7 +31,14 @@ export default function Left() {
 
   // current folder selection
   const { folderId: currentFolderId } = useParams();
+  function handleNewNote() {
+    if (!currentFolderId) {
+      showError("Please select a folder first");
+      return;
+    }
 
+    navigate(`/folder/${currentFolderId}/new`);
+  }
   // fetching folder to show on sidebar
   useEffect(() => {
     async function fetchFolder() {
@@ -156,9 +163,7 @@ export default function Left() {
         />
       )}
       {/* new note*/}
-      <NewNoteButton
-        onClick={() => navigate(`/folder/${currentFolderId}/new`)}
-      />
+      <NewNoteButton onClick={handleNewNote} />
       {/* recent */}
       <RecentNotes recentNotes={recentNotes} />
       {/* Folders */}
