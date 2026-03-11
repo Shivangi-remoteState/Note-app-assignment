@@ -1,4 +1,7 @@
 @import "tailwindcss";
+.font-name {
+  font-family: var(--font-name), sans-serif;
+}
 :root {
   --color-sidebar: #f5f3f3;
   --color-text: #111;

@@ -11,7 +11,6 @@ import ThemeToggle from "./ThemeToggle";
 import NewNoteButton from "./NewNoteButton";
 import ConfirmDelete from "../ConfirmDelete";
 import { showSuccess, showError } from "@/utils/toast";
-// import { useTheme } from "@/context/ThemeContext";
 
 export default function Left() {
   const [folders, setFolders] = useState<Folder[]>([]);

@@ -167,6 +167,7 @@ export default function Right({
   // archived
   async function toggleArchived() {
     try {
+      if (!currentNoteId) return;
       const valUpdated = !isArchived;
 
       await api.patch(`/notes/${noteId}`, {
@@ -176,6 +177,16 @@ export default function Right({
       setIsArchived(valUpdated);
       setNote((prev) => (prev ? { ...prev, isArchived: valUpdated } : prev));
       refreshNotes();
+      // if archived from a folder then show EmptyNote
+      if (valUpdated) {
+        // archive from folder then close editor
+        if (folderId) {
+          navigate(`/folder/${folderId}`);
+        }
+      } else {
+        // Unarchive from archived page → close editor
+        navigate(`/archived`);
+      }
     } catch (err) {
       console.log("Error in updating archived: ", err);
     }
@@ -194,10 +205,16 @@ export default function Right({
 
   // restore ui
   if (isTrashMode) {
-    return <Restore noteTitle={note?.title || ""} noteId={noteId || ""} />;
+    return (
+      <Restore
+        noteTitle={note?.title || ""}
+        noteId={noteId || ""}
+        folderId={note?.folderId || folderId || ""}
+      />
+    );
   }
   return (
-    <div className="h-screen w-right py-10 px-8 text-title flex flex-col font-name bg-[var(--color-right)] text-[var(--color-text)]">
+    <div className="h-screen w-right py-10 px-8 text-title flex flex-col font-name bg-(--color-right) text-[var(--color-text)]">
       {/* note heder */}
       <NoteHeader
         title={title}

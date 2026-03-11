@@ -42,15 +42,13 @@ const NoteHeader = ({
       {/* title */}
       <div className="flex items-center gap-2 w-full">
         <input
-          className="text-3xl font-bold w-full bg-[var(--color-transparent)] text-[var(--color-text)] placeholder-[var(--color-placeholder)]  outline-none"
+          className="text-3xl font-bold w-full bg-(--color-transparent) text-(--color-text) placeholder-(--color-placeholder)  outline-none"
           placeholder="Untitled"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
         />
 
-        {isFavorite && (
-          <span className="text-[var(--color-yellow-400)]">★</span>
-        )}
+        {isFavorite && <span className="text-yellow-400">★</span>}
       </div>
 
       <button

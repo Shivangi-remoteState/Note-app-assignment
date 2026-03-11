@@ -14,7 +14,7 @@ export default function Middle({
   isTrashPage = false,
 }) {
   const requestIdRef = useRef(0);
-  const { folderId } = useParams();
+  const { folderId, noteId } = useParams();
   const navigate = useNavigate();
 
   const [searchParams] = useSearchParams();
@@ -68,6 +68,12 @@ export default function Middle({
       setLoading(false);
     }
   }
+
+  useEffect(() => {
+    if (noteId) {
+      setSelectedNoteId(noteId);
+    }
+  }, [noteId]);
   // fetching notes when folder chnages
   useEffect(() => {
     setPage(1);
@@ -161,6 +167,8 @@ export default function Middle({
       <NotesList
         notes={notes}
         isTrashPage={isTrashPage}
+        isFavoritesPage={isFavoritesPage}
+        isArchivedPage={isArchivedPage}
         selectedNoteId={selectedNoteId}
         setSelectedNoteId={setSelectedNoteId}
       />

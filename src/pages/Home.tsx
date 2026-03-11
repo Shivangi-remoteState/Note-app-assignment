@@ -1,114 +1,119 @@
-import Left from "../components/sidebar/Left";
+import { Routes, Route } from "react-router-dom";
+
 import Middle from "../components/NoteList/Middle";
 import Right from "../components/NotePanel/Right";
 import EmptyNote from "../components/EmptyNote";
-import { Routes, Route } from "react-router-dom";
+import MainLayout from "@/components/layouts/MainLayout";
 
 const Home = () => {
   return (
-    <div
-      className="flex h-screen w-full bg-black text-white"
-      // className={`flex h-screen w-full ${
-      //   theme === "dark" ? "bg-black text-white" : "bg-white text-black"
-      // }`}
-    >
-      <Routes>
+    <Routes>
+      <Route element={<MainLayout />}>
         <Route
           path="/"
           element={
             <>
-              <Left />
               <Middle />
               <EmptyNote />
             </>
           }
         />
+
+        {/* Favorites */}
         <Route
           path="/favorites"
           element={
             <>
-              <Left />
-              <Middle isFavoritesPage={true} />
+              <Middle isFavoritesPage />
               <EmptyNote />
             </>
           }
         />
+
+        <Route
+          path="/favorites/note/:noteId"
+          element={
+            <>
+              <Middle isFavoritesPage />
+              <Right />
+            </>
+          }
+        />
+
+        {/* Archived */}
         <Route
           path="/archived"
           element={
             <>
-              <Left />
-              <Middle isArchivedPage={true} />
+              <Middle isArchivedPage />
               <EmptyNote />
             </>
           }
         />
+
         <Route
-          path="/trash/note/:noteId"
+          path="/archived/note/:noteId"
           element={
             <>
-              <Left />
-              <Middle isTrashPage={true} />
-              <Right isTrashMode={true} />
+              <Middle isArchivedPage />
+              <Right />
             </>
           }
         />
 
+        {/* Trash */}
         <Route
           path="/trash"
           element={
             <>
-              <Left />
-              <Middle isTrashPage={true} />
+              <Middle isTrashPage />
               <EmptyNote />
             </>
           }
         />
 
         <Route
-          path="folder/:folderId/*"
+          path="/trash/note/:noteId"
           element={
             <>
-              <Left />
-              <Routes>
-                {/* folder open then middle + right*/}
-                <Route
-                  path=""
-                  element={
-                    <>
-                      <Middle />
-                      <EmptyNote />
-                    </>
-                  }
-                />
-
-                {/* note open then middle+ right*/}
-                <Route
-                  path="note/:noteId"
-                  element={
-                    <>
-                      <Middle />
-                      <Right />
-                    </>
-                  }
-                />
-
-                {/* newnote then middle + right */}
-                <Route
-                  path="new"
-                  element={
-                    <>
-                      <Middle />
-                      <Right isNewNote={true} />
-                    </>
-                  }
-                />
-              </Routes>
+              <Middle isTrashPage />
+              <Right isTrashMode />
             </>
           }
         />
-      </Routes>
-    </div>
+
+        {/* Folder */}
+        <Route
+          path="/folder/:folderId"
+          element={
+            <>
+              <Middle />
+              <EmptyNote />
+            </>
+          }
+        />
+
+        <Route
+          path="/folder/:folderId/note/:noteId"
+          element={
+            <>
+              <Middle />
+              <Right />
+            </>
+          }
+        />
+
+        <Route
+          path="/folder/:folderId/new"
+          element={
+            <>
+              <Middle />
+              <Right isNewNote />
+            </>
+          }
+        />
+      </Route>
+    </Routes>
   );
 };
 

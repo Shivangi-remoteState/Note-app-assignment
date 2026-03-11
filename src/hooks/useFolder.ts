@@ -16,7 +16,7 @@ const useFolder = () => {
     }
 
     loadFolders();
-  }, []);
+  }, [folderId]);
   return folders;
 };
 

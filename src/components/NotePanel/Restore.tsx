@@ -6,14 +6,17 @@ import { useNavigate } from "react-router-dom";
 interface RestoreProps {
   noteTitle: string;
   noteId: string;
+  folderId: string;
 }
-const Restore = ({ noteTitle, noteId }: RestoreProps) => {
+const Restore = ({ noteTitle, noteId, folderId }: RestoreProps) => {
   const navigate = useNavigate();
   async function handleRestore() {
     try {
       await api.post(`/notes/${noteId}/restore`);
+
       showSuccess("Note restored");
-      navigate("/");
+
+      navigate(`/folder/${folderId}/note/${noteId}`);
     } catch (error) {
       console.log("Error in restoring notes:", error);
     }

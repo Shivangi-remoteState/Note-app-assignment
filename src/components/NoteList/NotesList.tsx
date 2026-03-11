@@ -5,6 +5,8 @@ import type { Note } from "../../types/api";
 interface Props {
   notes: Note[];
   isTrashPage: boolean;
+  isFavoritesPage?: boolean;
+  isArchivedPage?: boolean;
   selectedNoteId: string | null;
   setSelectedNoteId: (id: string) => void;
   lastNoteRef?: (node: HTMLDivElement | null) => void;
@@ -12,6 +14,8 @@ interface Props {
 const NotesList = ({
   notes,
   isTrashPage,
+  isFavoritesPage = false,
+  isArchivedPage = false,
   selectedNoteId,
   setSelectedNoteId,
   lastNoteRef,
@@ -30,9 +34,13 @@ const NotesList = ({
             className="flex flex-col gap-3"
             onClick={() => {
               setSelectedNoteId(note.id);
-
+              console.log("favorites page:", isFavoritesPage);
               if (isTrashPage) {
                 navigate(`/trash/note/${note.id}`);
+              } else if (isFavoritesPage) {
+                navigate(`/favorites/note/${note.id}`);
+              } else if (isArchivedPage) {
+                navigate(`/archived/note/${note.id}`);
               } else {
                 navigate(`/folder/${note.folderId}/note/${note.id}`);
               }
