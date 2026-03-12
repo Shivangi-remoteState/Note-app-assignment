@@ -1,6 +1,11 @@
 import { useEffect, useState } from "react";
 import { api } from "../../api/axios";
-import type { Folder, RecentNote } from "../../types/api";
+import type {
+  Folder,
+  RecentNote,
+  FoldersResponse,
+  RecentNotesResponse,
+} from "../../types/api";
 import { useNavigate, useParams } from "react-router-dom";
 import LogoSection from "./LogoSection";
 import MoreSection from "../MoreSection";
@@ -42,7 +47,7 @@ export default function Left() {
   useEffect(() => {
     async function fetchFolder() {
       try {
-        const response = await api.get("/folders");
+        const response = await api.get<FoldersResponse>("/folders");
         // console.log(response);
         const userFolder = response.data.folders;
         // console.log("Fetched folders:", userFolder);
@@ -59,7 +64,7 @@ export default function Left() {
   useEffect(() => {
     async function fetchRecentNotes() {
       try {
-        const response = await api.get("/notes/recent");
+        const response = await api.get<RecentNotesResponse>("/notes/recent");
         const recent = response.data.recentNotes || [];
         setRecentNotes(recent);
       } catch (error) {
@@ -84,7 +89,7 @@ export default function Left() {
       setLoading(true);
       await api.post("/folders", { name: folderName });
       showSuccess("Folder created");
-      const response = await api.get("/folders");
+      const response = await api.get<FoldersResponse>("/folders");
       setFolders(response.data.folders);
       setFolderName("");
       setShowInputBoxFolder(false);
@@ -100,7 +105,7 @@ export default function Left() {
       await api.delete(`/folders/${folderId}`);
       showSuccess("Folder moved to Trash");
       // refresh folder list
-      const response = await api.get("/folders");
+      const response = await api.get<FoldersResponse>("/folders");
       setFolders(response.data.folders);
       navigate("/trash");
     } catch (error) {
@@ -114,7 +119,7 @@ export default function Left() {
     try {
       await api.patch(`/folders/${folderId}`, { name: editFoldername });
       showSuccess("Folder renamed");
-      const response = await api.get("/folders");
+      const response = await api.get<FoldersResponse>("/folders");
       setFolders(response.data.folders);
       setEditedFolderId(null);
       setEditFolderName("");

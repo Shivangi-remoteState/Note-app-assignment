@@ -20,11 +20,12 @@ const NotesList = ({
   setSelectedNoteId,
   lastNoteRef,
 }: Props) => {
+  const uniqueNotes = Array.from(new Map(notes.map((n) => [n.id, n])).values());
   const navigate = useNavigate();
   return (
     <>
       {" "}
-      {notes.map((note, index) => {
+      {uniqueNotes.map((note, index) => {
         const isLast = index === notes.length - 1;
 
         return (
@@ -34,7 +35,6 @@ const NotesList = ({
             className="flex flex-col gap-3"
             onClick={() => {
               setSelectedNoteId(note.id);
-              console.log("favorites page:", isFavoritesPage);
               if (isTrashPage) {
                 navigate(`/trash/note/${note.id}`);
               } else if (isFavoritesPage) {

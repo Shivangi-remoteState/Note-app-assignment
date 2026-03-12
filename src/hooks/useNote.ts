@@ -1,6 +1,6 @@
 import { api } from "@/api/axios";
 import { useEffect, useState } from "react";
-import type { Note } from "../types/api";
+import type { Note, NoteResponse } from "../types/api";
 
 const useNote = (noteId?: string, isNewNote?: boolean) => {
   const [note, setNote] = useState<Note | null>(null);
@@ -15,7 +15,7 @@ const useNote = (noteId?: string, isNewNote?: boolean) => {
     }
     async function loadNote() {
       try {
-        const response = await api.get(`/notes/${noteId}`);
+        const response = await api.get<NoteResponse>(`/notes/${noteId}`);
         setNote(response.data.note);
         // console.log("note id:", noteId);
       } catch (error) {

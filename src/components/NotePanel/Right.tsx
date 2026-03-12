@@ -13,7 +13,8 @@ import { useAutoSave } from "@/hooks/useAutoSave";
 import { useNotes } from "@/context/NotesContext";
 import ConfirmDelete from "../ConfirmDelete";
 import { toast } from "sonner";
-
+import type { Note } from "../../types/api";
+export type CreateNoteResponse = Pick<Note, "id">;
 interface RightProps {
   isNewNote?: boolean;
   isTrashMode?: boolean;
@@ -85,7 +86,7 @@ export default function Right({
         createLock.current = true;
         setSaveStatus("Saving");
 
-        const response = await api.post("/notes", {
+        const response = await api.post<CreateNoteResponse>("/notes", {
           title: title || "Untitled",
           content,
           folderId: selectedFolder,
@@ -197,24 +198,35 @@ export default function Right({
       await api.delete(`/notes/${noteId}`);
       toast.success("Note moved to trash");
       refreshNotes();
-      navigate(`/trash/note/${noteId}`);
+      setNote((prev) =>
+        prev
+          ? { ...prev, deleted: true, deletedAt: new Date().toISOString() }
+          : prev,
+      );
+      navigate(`/folder/${folderId}/note/${noteId}`);
     } catch (error) {
       console.log("Error in deleting note:", error);
     }
   }
 
   // restore ui
-  if (isTrashMode) {
+  if (isTrashMode || note?.deleted) {
     return (
       <Restore
         noteTitle={note?.title || ""}
         noteId={noteId || ""}
         folderId={note?.folderId || folderId || ""}
+        isTrashMode={isTrashMode}
+        onRestore={() =>
+          setNote((prev) =>
+            prev ? { ...prev, deleted: false, deletedAt: null } : prev,
+          )
+        }
       />
     );
   }
   return (
-    <div className="h-screen w-right py-10 px-8 text-title flex flex-col font-name bg-(--color-right) text-[var(--color-text)]">
+    <div className="h-screen w-right py-10 px-8 text-title flex flex-col bg-(--color-right) text-(--color-text) font-name">
       {/* note heder */}
       <NoteHeader
         title={title}

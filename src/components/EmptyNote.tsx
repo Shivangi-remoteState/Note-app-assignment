@@ -2,7 +2,7 @@ import { FileText } from "lucide-react";
 
 export default function EmptyNote() {
   return (
-    <div className="flex flex-col items-center justify-center h-full w-right text-gray-300 bg-(--color-sidebar)">
+    <div className="flex flex-col items-center justify-center h-full w-right text-gray-300 bg-(--color-sidebar) font-name">
       <FileText size={67} className=" text-gray-500 opacity-80" />
 
       <h1 className="text-2xl font-semibold text-(--color-text) pt-4">

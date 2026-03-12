@@ -1,4 +1,5 @@
 import { api } from "@/api/axios";
+import { useNotes } from "@/context/NotesContext";
 import { showSuccess } from "@/utils/toast";
 import { RotateCcw } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -7,16 +8,30 @@ interface RestoreProps {
   noteTitle: string;
   noteId: string;
   folderId: string;
+  isTrashMode?: boolean;
+  onRestore?: () => void;
 }
-const Restore = ({ noteTitle, noteId, folderId }: RestoreProps) => {
+const Restore = ({
+  noteTitle,
+  noteId,
+  folderId,
+  isTrashMode,
+  onRestore,
+}: RestoreProps) => {
   const navigate = useNavigate();
+  const { refreshNotes } = useNotes();
   async function handleRestore() {
     try {
       await api.post(`/notes/${noteId}/restore`);
 
       showSuccess("Note restored");
-
-      navigate(`/folder/${folderId}/note/${noteId}`);
+      onRestore?.();
+      refreshNotes();
+      if (isTrashMode) {
+        navigate(`/trash`, { replace: true });
+      } else {
+        navigate(`/folder/${folderId}/note/${noteId}`, { replace: true });
+      }
     } catch (error) {
       console.log("Error in restoring notes:", error);
     }

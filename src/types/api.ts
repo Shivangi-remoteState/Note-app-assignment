@@ -11,6 +11,7 @@ export interface Note {
   title: string;
   content: string;
   preview: string;
+  deleted: boolean;
   isFavorite: boolean;
   isArchived: boolean;
   createdAt: string;
@@ -21,11 +22,16 @@ export interface Note {
 export interface NotesResponse {
   notes: Note[];
 }
-
-export type RecentNote = {
-  id: string;
-  title: string;
-  preview: string;
-  createdAt: string;
-  folderId: string;
-};
+export interface NoteResponse {
+  note: Note;
+}
+export interface FoldersResponse {
+  folders: Folder[];
+}
+export type RecentNote = Pick<
+  Note,
+  "id" | "title" | "preview" | "createdAt" | "folderId"
+>;
+export interface RecentNotesResponse {
+  recentNotes: RecentNote[];
+}

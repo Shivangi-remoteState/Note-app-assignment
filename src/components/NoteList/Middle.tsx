@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { api } from "../../api/axios";
-import type { Note } from "../../types/api";
+import type { Note, NotesResponse } from "../../types/api";
 import Card from "./Card";
 import { useNavigate, useParams } from "react-router-dom";
 import { useNotes } from "@/context/NotesContext";
@@ -51,7 +51,7 @@ export default function Middle({
         url += `&deleted=true`;
       }
 
-      const response = await api.get(url);
+      const response = await api.get<NotesResponse>(url);
       if (requestId !== requestIdRef.current) return;
       const noteData = response.data.notes;
       if (pageNumber === 1) {
@@ -125,7 +125,9 @@ export default function Middle({
 
       async function searchNotes() {
         try {
-          const response = await api.get(`/notes?search=${query}&limit=50`);
+          const response = await api.get<NotesResponse>(
+            `/notes?search=${query}&limit=50`,
+          );
           setSearchResults(response.data.notes);
         } catch (error) {
           console.log("Search error:", error);
