@@ -21,7 +21,7 @@ export default function Left() {
   const [folders, setFolders] = useState<Folder[]>([]);
   const [showInputBoxFolder, setShowInputBoxFolder] = useState(false);
   const [folderName, setFolderName] = useState("");
-  const [loading, setLoading] = useState(false);
+  // const [loading, setLoading] = useState(false);
 
   const [showSearch, setShowSearch] = useState(false);
   const [searchInpText, setSearchInpText] = useState("");
@@ -86,7 +86,7 @@ export default function Left() {
   async function handleCreateFolder() {
     if (!folderName.trim()) return;
     try {
-      setLoading(true);
+      // setLoading(true);
       await api.post("/folders", { name: folderName });
       showSuccess("Folder created");
       const response = await api.get<FoldersResponse>("/folders");
@@ -96,7 +96,7 @@ export default function Left() {
     } catch (error) {
       console.log("Error when creating folder:", error);
     } finally {
-      setLoading(false);
+      // setLoading(false);
     }
   }
   // delete folder
@@ -184,22 +184,32 @@ export default function Left() {
           </button>
         </div>
         {showInputBoxFolder && (
-          <div className="flex items-center gap-2">
+          <div>
             <input
               autoFocus
               type="text"
               value={folderName}
               onChange={(e) => setFolderName(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  handleCreateFolder();
+                }
+
+                if (e.key === "Escape") {
+                  setShowInputBoxFolder(false);
+                  setFolderName("");
+                }
+              }}
               placeholder="Enter folder name"
-              className="border border-(--color-border) bg-(--color-card) px-2 py-1 font-name text-sm text-(--color-text)"
+              className="w-full border border-(--color-border) bg-(--color-card) px-2 py-1 font-name text-sm text-(--color-text)"
             />
-            <button
+            {/* <button
               onClick={handleCreateFolder}
               disabled={loading}
               className="bg-blue-500 hover:bg-blue-600 text-white px-2 py-1 rounded text-sm"
             >
-              Save
-            </button>
+              Add
+            </button> */}
           </div>
         )}
         {/* load folder */}

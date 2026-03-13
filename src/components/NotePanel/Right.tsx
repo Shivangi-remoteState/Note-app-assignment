@@ -10,10 +10,10 @@ import NoteContent from "./NoteContent";
 import useNote from "@/hooks/useNote";
 import useFolder from "@/hooks/useFolder";
 import { useAutoSave } from "@/hooks/useAutoSave";
-import { useNotes } from "@/context/NotesContext";
 import ConfirmDelete from "../ConfirmDelete";
 import { toast } from "sonner";
 import type { Note } from "../../types/api";
+import { useNotes } from "@/hooks/useNotes";
 export type CreateNoteResponse = Pick<Note, "id">;
 interface RightProps {
   isNewNote?: boolean;

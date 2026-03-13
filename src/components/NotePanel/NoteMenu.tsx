@@ -49,8 +49,7 @@ const NoteMenu = ({
           onClick={handleArchive}
           className="flex items-center gap-3 px-3 py-2"
         >
-          <Archive size={16} />{" "}
-          {isArchived ? "Remove from Archive" : "Archived"}
+          <Archive size={16} /> {isArchived ? "Remove from Archive" : "Archive"}
         </button>
       </div>
 

@@ -1,12 +1,13 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { api } from "../../api/axios";
 import type { Note, NotesResponse } from "../../types/api";
 import Card from "./Card";
 import { useNavigate, useParams } from "react-router-dom";
-import { useNotes } from "@/context/NotesContext";
+
 import NotesList from "./NotesList";
 import useFolder from "@/hooks/useFolder";
 import { useSearchParams } from "react-router-dom";
+import { useNotes } from "@/hooks/useNotes";
 // fetchingnote from selected folder fromleft
 export default function Middle({
   isFavoritesPage = false,
@@ -30,44 +31,47 @@ export default function Middle({
   const [hasMore, setHasMore] = useState(true);
 
   const [searchResults, setSearchResults] = useState<Note[]>([]);
-  async function loadNotes(pageNumber = 1) {
-    const requestId = requestIdRef.current;
-    try {
-      setLoading(true);
-      let url = `/notes?page=${pageNumber}&limit=10`;
+  const loadNotes = useCallback(
+    async (pageNumber = 1) => {
+      const requestId = requestIdRef.current;
+      try {
+        setLoading(true);
+        let url = `/notes?page=${pageNumber}&limit=10`;
 
-      if (folderId) {
-        url += `&folderId=${folderId}`;
-      }
-      if (isFavoritesPage) {
-        url += `&favorite=true&deleted=false&archived=false`;
-      }
+        if (folderId) {
+          url += `&folderId=${folderId}`;
+        }
+        if (isFavoritesPage) {
+          url += `&favorite=true&deleted=false&archived=false`;
+        }
 
-      if (isArchivedPage) {
-        url += `&archived=true`;
-      }
+        if (isArchivedPage) {
+          url += `&archived=true`;
+        }
 
-      if (isTrashPage) {
-        url += `&deleted=true`;
-      }
+        if (isTrashPage) {
+          url += `&deleted=true`;
+        }
 
-      const response = await api.get<NotesResponse>(url);
-      if (requestId !== requestIdRef.current) return;
-      const noteData = response.data.notes;
-      if (pageNumber === 1) {
-        setNotes(noteData);
-      } else {
-        setNotes((prev) => [...prev, ...noteData]);
+        const response = await api.get<NotesResponse>(url);
+        if (requestId !== requestIdRef.current) return;
+        const noteData = response.data.notes;
+        if (pageNumber === 1) {
+          setNotes(noteData);
+        } else {
+          setNotes((prev) => [...prev, ...noteData]);
+        }
+        if (noteData.length < 10) {
+          setHasMore(false);
+        }
+      } catch (error) {
+        console.log("Error in loading notes", error);
+      } finally {
+        setLoading(false);
       }
-      if (noteData.length < 10) {
-        setHasMore(false);
-      }
-    } catch (error) {
-      console.log("Error in loading notes", error);
-    } finally {
-      setLoading(false);
-    }
-  }
+    },
+    [folderId, isFavoritesPage, isArchivedPage, isTrashPage],
+  );
 
   useEffect(() => {
     if (noteId) {
@@ -84,6 +88,7 @@ export default function Middle({
   useEffect(() => {
     setNotes([]);
   }, [folderId]);
+
   // scrolling
   useEffect(() => {
     const observer = new IntersectionObserver((entries) => {
@@ -141,7 +146,7 @@ export default function Middle({
   }, [query]);
   if (query.trim() !== "") {
     return (
-      <div className="h-screen flex flex-col w-middle p-4 border-r border-(--color-border) overflow-y-auto font-name bg-(--color-middle-back)">
+      <div className="h-screen flex flex-col w-middle p-4 border-r border-(--color-border) overflow-y-auto no-scrollbar font-name bg-(--color-middle-back)">
         <h2 className="text-2xl font-semibold text-(--color-text)">
           Search Results
         </h2>
@@ -163,17 +168,24 @@ export default function Middle({
     );
   }
   return (
-    <div className="h-full w-middle p-4 border-r border-(--color-border) flex flex-col gap-5 font-name bg-(--color-middle-back) text-(--color-text) overflow-y-auto">
+    <div className="h-full w-middle p-4 border-r border-(--color-border) flex flex-col gap-5 font-name bg-(--color-middle-back) text-(--color-text) overflow-y-auto no-scrollbar">
       <h2 className="text-2xl font-semibold">{folderName}</h2>
       {/* notes List */}
-      <NotesList
-        notes={notes}
-        isTrashPage={isTrashPage}
-        isFavoritesPage={isFavoritesPage}
-        isArchivedPage={isArchivedPage}
-        selectedNoteId={selectedNoteId}
-        setSelectedNoteId={setSelectedNoteId}
-      />
+      {notes.length === 0 && !loading ? (
+        <div className="text-sm pt-2 text-center text-gray-500">
+          No Notes found
+        </div>
+      ) : (
+        <NotesList
+          notes={notes}
+          isTrashPage={isTrashPage}
+          isFavoritesPage={isFavoritesPage}
+          isArchivedPage={isArchivedPage}
+          selectedNoteId={selectedNoteId}
+          setSelectedNoteId={setSelectedNoteId}
+        />
+      )}
+
       <div ref={loaderRef} className="flex justify-center py-4">
         {loading && (
           <div className="text-gray-400 text-sm">Loading notes...</div>

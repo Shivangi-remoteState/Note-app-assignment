@@ -25,7 +25,7 @@ const FolderSection = ({
   deleteFolder,
 }: Props) => {
   return (
-    <div className="flex flex-col flex-1 gap-1 overflow-y-auto">
+    <div className="flex flex-col flex-1 gap-1 overflow-y-auto no-scrollbar">
       {folders.map((folder) => (
         <div
           key={folder.id}

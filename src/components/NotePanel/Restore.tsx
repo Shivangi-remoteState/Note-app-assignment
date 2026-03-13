@@ -1,5 +1,5 @@
 import { api } from "@/api/axios";
-import { useNotes } from "@/context/NotesContext";
+import { useNotes } from "@/hooks/useNotes";
 import { showSuccess } from "@/utils/toast";
 import { RotateCcw } from "lucide-react";
 import { useNavigate } from "react-router-dom";

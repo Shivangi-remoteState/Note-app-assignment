@@ -22,9 +22,11 @@ export interface Note {
 export interface NotesResponse {
   notes: Note[];
 }
+
 export interface NoteResponse {
   note: Note;
 }
+
 export interface FoldersResponse {
   folders: Folder[];
 }

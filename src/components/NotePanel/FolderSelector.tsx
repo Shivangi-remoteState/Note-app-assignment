@@ -29,7 +29,7 @@ const FolderSelector = ({
     return () => {
       window.removeEventListener("click", handleWindowClick);
     };
-  }, [folderDropdownOpen]);
+  }, [folderDropdownOpen, setFolderDropdownOpen]);
   return (
     <div className="flex items-center gap-18 relative">
       <div className="flex items-center gap-2">
@@ -50,7 +50,7 @@ const FolderSelector = ({
         </div>
 
         {folderDropdownOpen && (
-          <div className="absolute top-7 left-7 w-44 h-63 bg-(--color-folderDropdown) border border-(--color-white-10) rounded-md shadow-lg z-50 overflow-y-auto">
+          <div className="absolute top-7 left-7 w-44 h-63 bg-(--color-folderDropdown) border border-(--color-white-10) rounded-md shadow-lg z-50 overflow-y-auto no-scrollbar">
             {folders.map((folder) => (
               <div
                 key={folder.id}
