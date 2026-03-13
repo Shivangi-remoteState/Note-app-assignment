@@ -110,10 +110,10 @@ export default function Middle({
     return () => {
       if (current) observer.unobserve(current);
     };
-  }, [hasMore, loading, page, folderId]);
+  }, [hasMore, loading, page, folderId, loadNotes]);
 
   // to show folderName as heading in middleportion
-  const folders = useFolder();
+  const { folders } = useFolder();
   let folderName = "";
   if (isArchivedPage) folderName = "Archived Notes";
   else if (isFavoritesPage) folderName = "Favorites";

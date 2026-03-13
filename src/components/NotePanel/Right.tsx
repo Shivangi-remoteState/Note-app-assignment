@@ -26,7 +26,7 @@ export default function Right({
 }: RightProps) {
   const { noteId, folderId } = useParams();
   const { note, setNote } = useNote(noteId, isNewNote);
-  const folders = useFolder();
+  const { folders } = useFolder();
   const [selectedFolder, setSelectedFolder] = useState("");
   const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
@@ -120,14 +120,7 @@ export default function Right({
   }
 
   // autosave debouncing
-  useAutoSave(
-    title,
-    content,
-    selectedFolder,
-    autoSaveNote,
-    setSaveStatus,
-    initialLoad,
-  );
+  useAutoSave(title, content, selectedFolder, autoSaveNote, setSaveStatus);
 
   // folder chsnge
   async function handleFolderChange(folderId: string) {

@@ -18,19 +18,15 @@ const NotesList = ({
   isArchivedPage = false,
   selectedNoteId,
   setSelectedNoteId,
-  lastNoteRef,
 }: Props) => {
   const uniqueNotes = Array.from(new Map(notes.map((n) => [n.id, n])).values());
   const navigate = useNavigate();
   return (
     <>
       {" "}
-      {uniqueNotes.map((note, index) => {
-        const isLast = index === notes.length - 1;
-
+      {uniqueNotes.map((note) => {
         return (
           <div
-            ref={isLast ? lastNoteRef : null}
             key={note.id}
             className="flex flex-col gap-3"
             onClick={() => {

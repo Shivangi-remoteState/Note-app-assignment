@@ -1,11 +1,5 @@
 import { useEffect, useState } from "react";
 import { api } from "../../api/axios";
-import type {
-  Folder,
-  RecentNote,
-  FoldersResponse,
-  RecentNotesResponse,
-} from "../../types/api";
 import { useNavigate, useParams } from "react-router-dom";
 import LogoSection from "./LogoSection";
 import MoreSection from "../MoreSection";
@@ -16,9 +10,13 @@ import ThemeToggle from "./ThemeToggle";
 import NewNoteButton from "./NewNoteButton";
 import ConfirmDelete from "../ConfirmDelete";
 import { showSuccess, showError } from "@/utils/toast";
+import useFolder from "@/hooks/useFolder";
+import useRecentNotes from "@/hooks/recentNotes";
 
 export default function Left() {
-  const [folders, setFolders] = useState<Folder[]>([]);
+  // const [folders, setFolders] = useState<Folder[]>([]);
+  const { folders, loadFolders } = useFolder();
+  const { recentNotes } = useRecentNotes();
   const [showInputBoxFolder, setShowInputBoxFolder] = useState(false);
   const [folderName, setFolderName] = useState("");
   // const [loading, setLoading] = useState(false);
@@ -44,35 +42,35 @@ export default function Left() {
     navigate(`/folder/${currentFolderId}/new`);
   }
   // fetching folder to show on sidebar
-  useEffect(() => {
-    async function fetchFolder() {
-      try {
-        const response = await api.get<FoldersResponse>("/folders");
-        // console.log(response);
-        const userFolder = response.data.folders;
-        // console.log("Fetched folders:", userFolder);
-        setFolders(userFolder);
-      } catch (error) {
-        console.log("Error in fetching folder", error);
-      }
-    }
-    fetchFolder();
-  }, []);
+  // useEffect(() => {
+  //   async function fetchFolder() {
+  //     try {
+  //       const response = await api.get<FoldersResponse>("/folders");
+  //       // console.log(response);
+  //       const userFolder = response.data.folders;
+  //       // console.log("Fetched folders:", userFolder);
+  //       setFolders(userFolder);
+  //     } catch (error) {
+  //       console.log("Error in fetching folder", error);
+  //     }
+  //   }
+  //   fetchFolder();
+  // }, []);
 
   // fetching recent notes
-  const [recentNotes, setRecentNotes] = useState<RecentNote[]>([]);
-  useEffect(() => {
-    async function fetchRecentNotes() {
-      try {
-        const response = await api.get<RecentNotesResponse>("/notes/recent");
-        const recent = response.data.recentNotes || [];
-        setRecentNotes(recent);
-      } catch (error) {
-        console.log("Error in fetching recent notes:", error);
-      }
-    }
-    fetchRecentNotes();
-  }, []);
+  // const [recentNotes, setRecentNotes] = useState<RecentNote[]>([]);
+  // useEffect(() => {
+  //   async function fetchRecentNotes() {
+  //     try {
+  //       const response = await api.get<RecentNotesResponse>("/notes/recent");
+  //       const recent = response.data.recentNotes || [];
+  //       setRecentNotes(recent);
+  //     } catch (error) {
+  //       console.log("Error in fetching recent notes:", error);
+  //     }
+  //   }
+  //   fetchRecentNotes();
+  // }, []);
 
   // by default select first folder
   useEffect(() => {
@@ -89,8 +87,7 @@ export default function Left() {
       // setLoading(true);
       await api.post("/folders", { name: folderName });
       showSuccess("Folder created");
-      const response = await api.get<FoldersResponse>("/folders");
-      setFolders(response.data.folders);
+      await loadFolders();
       setFolderName("");
       setShowInputBoxFolder(false);
     } catch (error) {
@@ -105,8 +102,7 @@ export default function Left() {
       await api.delete(`/folders/${folderId}`);
       showSuccess("Folder moved to Trash");
       // refresh folder list
-      const response = await api.get<FoldersResponse>("/folders");
-      setFolders(response.data.folders);
+      await loadFolders();
       navigate("/trash");
     } catch (error) {
       console.log("Error in deleting folder:", error);
@@ -119,8 +115,7 @@ export default function Left() {
     try {
       await api.patch(`/folders/${folderId}`, { name: editFoldername });
       showSuccess("Folder renamed");
-      const response = await api.get<FoldersResponse>("/folders");
-      setFolders(response.data.folders);
+      await loadFolders();
       setEditedFolderId(null);
       setEditFolderName("");
     } catch (error) {
@@ -140,7 +135,7 @@ export default function Left() {
     }, 400);
 
     return () => clearTimeout(timer);
-  }, [searchInpText]);
+  }, [searchInpText, navigate]);
 
   return (
     <div className="w-sidebar h-screen px-4 py-5 flex flex-col gap-gap font-name bg-(--color-sidebar) text-(--color-text)">
