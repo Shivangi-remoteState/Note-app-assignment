@@ -49,20 +49,20 @@ export default function Right({
 
   const { refreshNotes } = useNotes();
 
-  // fetching notes
+  // initalize  notes
   useEffect(() => {
     if (!note) return;
-
     setTitle(note.title || "");
     setContent(note.content || "");
     setCurrentNoteId(note.id);
     setIsFavorite(note.isFavorite);
     setIsArchived(note.isArchived);
     setSelectedFolder(note.folderId);
-
     initialLoad.current = true;
+    setSaveStatus("Idle");
   }, [note]);
-  //  fetch folder
+
+  //  reseting note when click +icon
   useEffect(() => {
     if (isNewNote && !noteId) {
       setTitle("");
@@ -105,12 +105,13 @@ export default function Right({
       // updating existing note
       if (currentNoteId) {
         setSaveStatus("Saving");
-        refreshNotes();
+
         await api.patch(`/notes/${currentNoteId}`, {
           title: title || "Untitled",
           content,
           updatedAt: new Date().toISOString(),
         });
+        refreshNotes();
         setSaveStatus("Saved");
         setTimeout(() => setSaveStatus("Idle"), 1500);
       }
@@ -120,7 +121,14 @@ export default function Right({
   }
 
   // autosave debouncing
-  useAutoSave(title, content, selectedFolder, autoSaveNote, setSaveStatus);
+  useAutoSave(
+    title,
+    content,
+    selectedFolder,
+    autoSaveNote,
+    setSaveStatus,
+    initialLoad,
+  );
 
   // folder chsnge
   async function handleFolderChange(folderId: string) {

@@ -8,6 +8,7 @@ import NotesList from "./NotesList";
 import useFolder from "@/hooks/useFolder";
 import { useSearchParams } from "react-router-dom";
 import { useNotes } from "@/hooks/useNotes";
+
 // fetchingnote from selected folder fromleft
 export default function Middle({
   isFavoritesPage = false,
@@ -25,8 +26,6 @@ export default function Middle({
   const { refreshTrigger } = useNotes();
   const loaderRef = useRef<HTMLDivElement | null>(null);
   const [selectedNoteId, setSelectedNoteId] = useState<string | null>(null);
-
-  const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
 
@@ -78,16 +77,14 @@ export default function Middle({
       setSelectedNoteId(noteId);
     }
   }, [noteId]);
+
   // fetching notes when folder chnages
   useEffect(() => {
-    setPage(1);
     setHasMore(true);
+    setNotes([]);
     requestIdRef.current++;
     loadNotes(1);
   }, [folderId, isFavoritesPage, isArchivedPage, isTrashPage, refreshTrigger]);
-  useEffect(() => {
-    setNotes([]);
-  }, [folderId]);
 
   // scrolling
   useEffect(() => {
@@ -95,11 +92,7 @@ export default function Middle({
       const first = entries[0];
 
       if (first.isIntersecting && hasMore && !loading) {
-        setPage((prevPage) => {
-          const nextPage = prevPage + 1;
-          loadNotes(nextPage);
-          return nextPage;
-        });
+        loadNotes(notes.length / 10 + 1);
       }
     });
 
@@ -110,7 +103,7 @@ export default function Middle({
     return () => {
       if (current) observer.unobserve(current);
     };
-  }, [hasMore, loading, page, folderId, loadNotes]);
+  }, [hasMore, loading]);
 
   // to show folderName as heading in middleportion
   const { folders } = useFolder();

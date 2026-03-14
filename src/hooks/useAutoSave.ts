@@ -1,4 +1,5 @@
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
+import type { RefObject } from "react";
 
 export function useAutoSave(
   title: string,
@@ -6,14 +7,14 @@ export function useAutoSave(
   selectedFolder: string,
   saveFunction: () => void,
   setStatus: (s: string) => void,
+  initialLoadRef: RefObject<boolean>,
 ) {
-  const initialLoad = useRef(true);
   useEffect(() => {
     if (!selectedFolder) return;
     if (!title && !content) return;
 
-    if (initialLoad.current) {
-      initialLoad.current = false;
+    if (initialLoadRef.current) {
+      initialLoadRef.current = false;
       return;
     }
 
@@ -24,5 +25,5 @@ export function useAutoSave(
     }, 600);
 
     return () => clearTimeout(timer);
-  }, [title, content, selectedFolder, saveFunction, setStatus]);
+  }, [title, content, selectedFolder]);
 }

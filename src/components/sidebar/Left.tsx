@@ -41,36 +41,6 @@ export default function Left() {
 
     navigate(`/folder/${currentFolderId}/new`);
   }
-  // fetching folder to show on sidebar
-  // useEffect(() => {
-  //   async function fetchFolder() {
-  //     try {
-  //       const response = await api.get<FoldersResponse>("/folders");
-  //       // console.log(response);
-  //       const userFolder = response.data.folders;
-  //       // console.log("Fetched folders:", userFolder);
-  //       setFolders(userFolder);
-  //     } catch (error) {
-  //       console.log("Error in fetching folder", error);
-  //     }
-  //   }
-  //   fetchFolder();
-  // }, []);
-
-  // fetching recent notes
-  // const [recentNotes, setRecentNotes] = useState<RecentNote[]>([]);
-  // useEffect(() => {
-  //   async function fetchRecentNotes() {
-  //     try {
-  //       const response = await api.get<RecentNotesResponse>("/notes/recent");
-  //       const recent = response.data.recentNotes || [];
-  //       setRecentNotes(recent);
-  //     } catch (error) {
-  //       console.log("Error in fetching recent notes:", error);
-  //     }
-  //   }
-  //   fetchRecentNotes();
-  // }, []);
 
   // by default select first folder
   useEffect(() => {
@@ -80,11 +50,10 @@ export default function Left() {
     }
   }, [folders, navigate]);
 
-  // add folder when click on save button
+  // add folder when enter
   async function handleCreateFolder() {
     if (!folderName.trim()) return;
     try {
-      // setLoading(true);
       await api.post("/folders", { name: folderName });
       showSuccess("Folder created");
       await loadFolders();
@@ -92,8 +61,6 @@ export default function Left() {
       setShowInputBoxFolder(false);
     } catch (error) {
       console.log("Error when creating folder:", error);
-    } finally {
-      // setLoading(false);
     }
   }
   // delete folder
