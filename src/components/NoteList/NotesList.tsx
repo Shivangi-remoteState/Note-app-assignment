@@ -8,7 +8,7 @@ interface Props {
   isFavoritesPage?: boolean;
   isArchivedPage?: boolean;
   selectedNoteId: string | null;
-  setSelectedNoteId: (id: string) => void;
+  // setSelectedNoteId: (id: string) => void;
   lastNoteRef?: (node: HTMLDivElement | null) => void;
 }
 const NotesList = ({
@@ -17,7 +17,7 @@ const NotesList = ({
   isFavoritesPage = false,
   isArchivedPage = false,
   selectedNoteId,
-  setSelectedNoteId,
+  // setSelectedNoteId,
 }: Props) => {
   const uniqueNotes = Array.from(new Map(notes.map((n) => [n.id, n])).values());
   const navigate = useNavigate();
@@ -30,7 +30,7 @@ const NotesList = ({
             key={note.id}
             className="flex flex-col gap-3"
             onClick={() => {
-              setSelectedNoteId(note.id);
+              // setSelectedNoteId(note.id);
               if (isTrashPage) {
                 navigate(`/trash/note/${note.id}`);
               } else if (isFavoritesPage) {

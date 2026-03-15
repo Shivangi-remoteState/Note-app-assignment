@@ -40,6 +40,7 @@ const NoteHeader = ({
   return (
     <div className="flex justify-between relative pb-8 ">
       {/* title */}
+
       <div className="flex items-center gap-2 w-full">
         <input
           className="text-3xl font-bold w-full bg-(--color-transparent) text-(--color-text) placeholder-(--color-placeholder)  outline-none"
@@ -50,8 +51,8 @@ const NoteHeader = ({
 
         {isFavorite && <span className="text-yellow-400">★</span>}
       </div>
-
       <button
+        className="cursor-pointer"
         onClick={(e) => {
           e.stopPropagation();
           setMenuOpen(!menuOpen);

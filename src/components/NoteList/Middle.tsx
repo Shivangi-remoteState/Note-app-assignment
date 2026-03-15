@@ -25,7 +25,7 @@ export default function Middle({
   const [notes, setNotes] = useState<Note[]>([]);
   const { refreshTrigger } = useNotes();
   const loaderRef = useRef<HTMLDivElement | null>(null);
-  const [selectedNoteId, setSelectedNoteId] = useState<string | null>(null);
+  // const [selectedNoteId, setSelectedNoteId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
 
@@ -35,6 +35,29 @@ export default function Middle({
       const requestId = requestIdRef.current;
       try {
         setLoading(true);
+        if (isTrashPage) {
+          const res1 = await api.get<NotesResponse>(
+            `/notes?page=${pageNumber}&limit=10&deleted=true&archived=true`,
+          );
+
+          const res2 = await api.get<NotesResponse>(
+            `/notes?page=${pageNumber}&limit=10&deleted=true&archived=false`,
+          );
+
+          const noteData = [...res1.data.notes, ...res2.data.notes];
+
+          if (requestId !== requestIdRef.current) return;
+
+          if (pageNumber === 1) {
+            setNotes(noteData);
+          } else {
+            setNotes((prev) => [...prev, ...noteData]);
+          }
+
+          if (noteData.length < 10) setHasMore(false);
+          return;
+        }
+
         let url = `/notes?page=${pageNumber}&limit=10`;
 
         if (folderId) {
@@ -45,12 +68,12 @@ export default function Middle({
         }
 
         if (isArchivedPage) {
-          url += `&archived=true`;
+          url += `&archived=true&deleted=false`;
         }
 
-        if (isTrashPage) {
-          url += `&deleted=true`;
-        }
+        // if (isTrashPage) {
+        //   url += `&deleted=true`;
+        // }
 
         const response = await api.get<NotesResponse>(url);
         if (requestId !== requestIdRef.current) return;
@@ -72,11 +95,11 @@ export default function Middle({
     [folderId, isFavoritesPage, isArchivedPage, isTrashPage],
   );
 
-  useEffect(() => {
-    if (noteId) {
-      setSelectedNoteId(noteId);
-    }
-  }, [noteId]);
+  // useEffect(() => {
+  //   if (noteId) {
+  //     setSelectedNoteId(noteId);
+  //   }
+  // }, [noteId]);
 
   // fetching notes when folder chnages
   useEffect(() => {
@@ -174,8 +197,8 @@ export default function Middle({
           isTrashPage={isTrashPage}
           isFavoritesPage={isFavoritesPage}
           isArchivedPage={isArchivedPage}
-          selectedNoteId={selectedNoteId}
-          setSelectedNoteId={setSelectedNoteId}
+          selectedNoteId={noteId ?? null}
+          // setSelectedNoteId={setSelectedNoteId}
         />
       )}
 

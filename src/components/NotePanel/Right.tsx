@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { api } from "../../api/axios";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import Restore from "./Restore";
 import StatusIndication from "./StatusIndication";
 import NoteHeader from "./NoteHeader";
@@ -14,6 +14,7 @@ import ConfirmDelete from "../ConfirmDelete";
 import { toast } from "sonner";
 import type { Note } from "../../types/api";
 import { useNotes } from "@/hooks/useNotes";
+
 export type CreateNoteResponse = Pick<Note, "id">;
 interface RightProps {
   isNewNote?: boolean;
@@ -48,6 +49,8 @@ export default function Right({
   const [noteToDelete, setNoteToDelete] = useState<string | null>(null);
 
   const { refreshNotes } = useNotes();
+
+  const location = useLocation();
 
   // initalize  notes
   useEffect(() => {
@@ -94,6 +97,7 @@ export default function Right({
 
         const newId = response.data.id;
         toast.success("Note created");
+        console.log("Newly create noteid", newId);
         setCurrentNoteId(newId);
         refreshNotes();
         navigate(`/folder/${selectedFolder}/note/${newId}`, { replace: true });
@@ -204,7 +208,6 @@ export default function Right({
           ? { ...prev, deleted: true, deletedAt: new Date().toISOString() }
           : prev,
       );
-      navigate(`/folder/${folderId}/note/${noteId}`);
     } catch (error) {
       console.log("Error in deleting note:", error);
     }
@@ -217,7 +220,7 @@ export default function Right({
         noteTitle={note?.title || ""}
         noteId={noteId || ""}
         folderId={note?.folderId || folderId || ""}
-        isTrashMode={isTrashMode}
+        currentPath={location.pathname}
         onRestore={() =>
           setNote((prev) =>
             prev ? { ...prev, deleted: false, deletedAt: null } : prev,

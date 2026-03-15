@@ -8,14 +8,16 @@ interface RestoreProps {
   noteTitle: string;
   noteId: string;
   folderId: string;
-  isTrashMode?: boolean;
+
+  currentPath: string;
   onRestore?: () => void;
 }
 const Restore = ({
   noteTitle,
   noteId,
   folderId,
-  isTrashMode,
+
+  currentPath,
   onRestore,
 }: RestoreProps) => {
   const navigate = useNavigate();
@@ -27,8 +29,12 @@ const Restore = ({
       showSuccess("Note restored");
       onRestore?.();
       refreshNotes();
-      if (isTrashMode) {
-        navigate(`/trash`, { replace: true });
+      if (currentPath.startsWith("/favorites")) {
+        navigate("/favorites", { replace: true });
+      } else if (currentPath.startsWith("/archived")) {
+        navigate("/archived", { replace: true });
+      } else if (currentPath.startsWith("/trash")) {
+        navigate("/trash", { replace: true });
       } else {
         navigate(`/folder/${folderId}/note/${noteId}`, { replace: true });
       }

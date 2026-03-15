@@ -4,7 +4,7 @@ import { Sun, Moon } from "lucide-react";
 const ThemeToggle = () => {
   const { theme, toggleTheme } = useTheme();
   return (
-    <div onClick={toggleTheme}>
+    <div onClick={toggleTheme} className="cursor-pointer">
       {theme === "dark" ? (
         <div className="flex justify-center items-center gap-2 hover:text-[var(--color-blue-500)">
           <Sun size={18} className="text-yellow-500" />
