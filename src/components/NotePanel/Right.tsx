@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { api } from "../../api/axios";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import Restore from "./Restore";
@@ -12,10 +12,9 @@ import useFolder from "@/hooks/useFolder";
 import { useAutoSave } from "@/hooks/useAutoSave";
 import ConfirmDelete from "../ConfirmDelete";
 import { toast } from "sonner";
-import type { Note } from "../../types/api";
+import type { CreateNoteResponse } from "../../types/api";
 import { useNotes } from "@/hooks/useNotes";
 
-export type CreateNoteResponse = Pick<Note, "id">;
 interface RightProps {
   isNewNote?: boolean;
   isTrashMode?: boolean;
@@ -52,7 +51,7 @@ export default function Right({
 
   const location = useLocation();
 
-  // initalize  notes
+  // initalize  notes load note data when open
   useEffect(() => {
     if (!note) return;
     setTitle(note.title || "");
@@ -75,7 +74,7 @@ export default function Right({
       setSaveStatus("Idle");
     }
   }, [isNewNote, noteId]);
-
+  // set folder for new note from url
   useEffect(() => {
     if (isNewNote && folderId) {
       setSelectedFolder(folderId);
@@ -83,7 +82,7 @@ export default function Right({
   }, [folderId, isNewNote]);
 
   // funtion auto save
-  async function autoSaveNote() {
+  const autoSaveNote = useCallback(async () => {
     try {
       if (!currentNoteId && !createLock.current) {
         createLock.current = true;
@@ -97,11 +96,12 @@ export default function Right({
 
         const newId = response.data.id;
         toast.success("Note created");
-        console.log("Newly create noteid", newId);
+        // console.log("Newly create noteid", newId);
         setCurrentNoteId(newId);
         refreshNotes();
         navigate(`/folder/${selectedFolder}/note/${newId}`, { replace: true });
         setSaveStatus("Saved");
+        // reset back to idle
         setTimeout(() => setSaveStatus("Idle"), 1000);
         return;
       }
@@ -117,12 +117,12 @@ export default function Right({
         });
         refreshNotes();
         setSaveStatus("Saved");
-        setTimeout(() => setSaveStatus("Idle"), 1500);
+        setTimeout(() => setSaveStatus("Idle"), 1000);
       }
     } catch (error) {
       console.log("Autosave error:", error);
     }
-  }
+  }, [title, content, selectedFolder, currentNoteId, navigate, refreshNotes]);
 
   // autosave debouncing
   useAutoSave(

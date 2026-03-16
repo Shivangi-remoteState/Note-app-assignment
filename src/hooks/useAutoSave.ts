@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import type { RefObject } from "react";
 
 export function useAutoSave(
@@ -9,10 +9,17 @@ export function useAutoSave(
   setStatus: (s: string) => void,
   initialLoadRef: RefObject<boolean>,
 ) {
+  const saveRef = useRef(saveFunction);
   useEffect(() => {
-    if (!selectedFolder) return;
-    if (!title && !content) return;
+    saveRef.current = saveFunction;
+  }, [saveFunction]);
 
+  useEffect(() => {
+    // note must belong to a folder
+    if (!selectedFolder) return;
+    // not create empty note
+    if (!title && !content) return;
+    // prevent autosave when note first load
     if (initialLoadRef.current) {
       initialLoadRef.current = false;
       return;
@@ -21,9 +28,9 @@ export function useAutoSave(
     setStatus("Typing");
 
     const timer = setTimeout(() => {
-      saveFunction();
+      saveRef.current();
     }, 600);
 
     return () => clearTimeout(timer);
-  }, [title, content, selectedFolder]);
+  }, [title, content, selectedFolder, initialLoadRef, setStatus]);
 }

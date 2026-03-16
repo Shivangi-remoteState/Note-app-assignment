@@ -25,9 +25,8 @@ export default function Middle({
   const [notes, setNotes] = useState<Note[]>([]);
   const { refreshTrigger } = useNotes();
   const loaderRef = useRef<HTMLDivElement | null>(null);
-  // const [selectedNoteId, setSelectedNoteId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const [hasMore, setHasMore] = useState(true);
+  const [hasMore, setHasMore] = useState(false);
 
   const [searchResults, setSearchResults] = useState<Note[]>([]);
   const loadNotes = useCallback(
@@ -35,28 +34,28 @@ export default function Middle({
       const requestId = requestIdRef.current;
       try {
         setLoading(true);
-        if (isTrashPage) {
-          const res1 = await api.get<NotesResponse>(
-            `/notes?page=${pageNumber}&limit=10&deleted=true&archived=true`,
-          );
+        // if (isTrashPage) {
+        //   const res1 = await api.get<NotesResponse>(
+        //     `/notes?page=${pageNumber}&limit=10&deleted=true&archived=true`,
+        //   );
 
-          const res2 = await api.get<NotesResponse>(
-            `/notes?page=${pageNumber}&limit=10&deleted=true&archived=false`,
-          );
+        //   const res2 = await api.get<NotesResponse>(
+        //     `/notes?page=${pageNumber}&limit=10&deleted=true&archived=false`,
+        //   );
 
-          const noteData = [...res1.data.notes, ...res2.data.notes];
+        //   const noteData = [...res1.data.notes, ...res2.data.notes];
 
-          if (requestId !== requestIdRef.current) return;
+        //   if (requestId !== requestIdRef.current) return;
 
-          if (pageNumber === 1) {
-            setNotes(noteData);
-          } else {
-            setNotes((prev) => [...prev, ...noteData]);
-          }
+        //   if (pageNumber === 1) {
+        //     setNotes(noteData);
+        //   } else {
+        //     setNotes((prev) => [...prev, ...noteData]);
+        //   }
 
-          if (noteData.length < 10) setHasMore(false);
-          return;
-        }
+        //   if (noteData.length === 10) setHasMore(true);
+        //   return;
+        // }
 
         let url = `/notes?page=${pageNumber}&limit=10`;
 
@@ -71,9 +70,9 @@ export default function Middle({
           url += `&archived=true&deleted=false`;
         }
 
-        // if (isTrashPage) {
-        //   url += `&deleted=true`;
-        // }
+        if (isTrashPage) {
+          url += `&deleted=true`;
+        }
 
         const response = await api.get<NotesResponse>(url);
         if (requestId !== requestIdRef.current) return;
@@ -95,16 +94,12 @@ export default function Middle({
     [folderId, isFavoritesPage, isArchivedPage, isTrashPage],
   );
 
-  // useEffect(() => {
-  //   if (noteId) {
-  //     setSelectedNoteId(noteId);
-  //   }
-  // }, [noteId]);
-
   // fetching notes when folder chnages
   useEffect(() => {
-    setHasMore(true);
+    if (!folderId && !isFavoritesPage && !isArchivedPage && !isTrashPage)
+      return;
     setNotes([]);
+    setHasMore(true);
     requestIdRef.current++;
     loadNotes(1);
   }, [folderId, isFavoritesPage, isArchivedPage, isTrashPage, refreshTrigger]);
@@ -126,7 +121,7 @@ export default function Middle({
     return () => {
       if (current) observer.unobserve(current);
     };
-  }, [hasMore, loading]);
+  }, [hasMore, loadNotes, loading, notes.length]);
 
   // to show folderName as heading in middleportion
   const { folders } = useFolder();
@@ -136,7 +131,7 @@ export default function Middle({
   else if (isTrashPage) folderName = "Trash";
   else if (folderId) {
     const selected = folders.find((f) => f.id === folderId);
-    folderName = selected?.name || "";
+    folderName = selected?.name || "Folder name";
   }
 
   // search
@@ -198,7 +193,6 @@ export default function Middle({
           isFavoritesPage={isFavoritesPage}
           isArchivedPage={isArchivedPage}
           selectedNoteId={noteId ?? null}
-          // setSelectedNoteId={setSelectedNoteId}
         />
       )}
 

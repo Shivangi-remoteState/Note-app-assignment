@@ -10,7 +10,7 @@ const RecentNotes = ({ recentNotes }: Props) => {
   const navigate = useNavigate();
   const loaction = useLocation();
   const noteId = loaction.pathname.split("/note/")[1];
-  console.log("noteid", noteId);
+
   return (
     <div className="flex flex-col gap-2">
       <div className="text-sm py-1 px-2 font-name">Recents</div>

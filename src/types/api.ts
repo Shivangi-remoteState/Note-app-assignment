@@ -37,3 +37,4 @@ export type RecentNote = Pick<
 export interface RecentNotesResponse {
   recentNotes: RecentNote[];
 }
+export type CreateNoteResponse = Pick<Note, "id">;

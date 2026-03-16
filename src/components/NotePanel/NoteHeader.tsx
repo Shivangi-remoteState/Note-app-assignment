@@ -35,7 +35,7 @@ const NoteHeader = ({
     return () => {
       window.removeEventListener("click", handleWindowClick);
     };
-  }, [menuOpen]);
+  }, [menuOpen, setMenuOpen]);
 
   return (
     <div className="flex justify-between relative pb-8 ">
