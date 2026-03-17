@@ -61,6 +61,7 @@ export default function Left() {
       setShowInputBoxFolder(false);
     } catch (error) {
       console.log("Error when creating folder:", error);
+      showError("Folder creation failed");
     }
   }
   // delete folder
@@ -73,6 +74,7 @@ export default function Left() {
       navigate("/trash");
     } catch (error) {
       console.log("Error in deleting folder:", error);
+      showError("Folder failed to move to trash");
     }
   }
 
@@ -87,6 +89,7 @@ export default function Left() {
       setEditFolderName("");
     } catch (error) {
       console.log("Error in updating folder name:", error);
+      showError("Folder rename failed");
     }
   }
   //  debouncing

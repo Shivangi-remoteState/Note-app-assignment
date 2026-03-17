@@ -1,6 +1,6 @@
 import { api } from "@/api/axios";
 import { useNotes } from "@/hooks/useNotes";
-import { showSuccess } from "@/utils/toast";
+import { showError, showSuccess } from "@/utils/toast";
 import { RotateCcw } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
@@ -40,6 +40,7 @@ const Restore = ({
       }
     } catch (error) {
       console.log("Error in restoring notes:", error);
+      showError("Failed to restore note");
     }
   }
   return (

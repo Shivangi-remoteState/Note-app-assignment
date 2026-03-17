@@ -9,17 +9,24 @@ const useNote = (noteId?: string, isNewNote?: boolean) => {
   useEffect(() => {
     // not fetch note when creating
     if (isNewNote) return;
+    let click = true;
 
     async function loadNote() {
       try {
         const response = await api.get<NoteResponse>(`/notes/${noteId}`);
+        if (!click) return;
         setNote(response.data.note);
         // console.log("note id:", noteId);
       } catch (error) {
         console.log("error loading note:", error);
       }
     }
+
     loadNote();
+
+    return () => {
+      click = false;
+    };
   }, [noteId, isNewNote]);
   return { note, setNote };
 };

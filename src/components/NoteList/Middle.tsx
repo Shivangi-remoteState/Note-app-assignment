@@ -15,7 +15,7 @@ export default function Middle({
   isArchivedPage = false,
   isTrashPage = false,
 }) {
-  const requestIdRef = useRef(0);
+  // const requestIdRef = useRef(0);
   const { folderId, noteId } = useParams();
   const navigate = useNavigate();
 
@@ -29,34 +29,12 @@ export default function Middle({
   const [hasMore, setHasMore] = useState(false);
 
   const [searchResults, setSearchResults] = useState<Note[]>([]);
+
   const loadNotes = useCallback(
-    async (pageNumber = 1) => {
-      const requestId = requestIdRef.current;
+    async (pageNumber = 1, control = { click: true }) => {
+      // const requestId = requestIdRef.current;
       try {
         setLoading(true);
-        // if (isTrashPage) {
-        //   const res1 = await api.get<NotesResponse>(
-        //     `/notes?page=${pageNumber}&limit=10&deleted=true&archived=true`,
-        //   );
-
-        //   const res2 = await api.get<NotesResponse>(
-        //     `/notes?page=${pageNumber}&limit=10&deleted=true&archived=false`,
-        //   );
-
-        //   const noteData = [...res1.data.notes, ...res2.data.notes];
-
-        //   if (requestId !== requestIdRef.current) return;
-
-        //   if (pageNumber === 1) {
-        //     setNotes(noteData);
-        //   } else {
-        //     setNotes((prev) => [...prev, ...noteData]);
-        //   }
-
-        //   if (noteData.length === 10) setHasMore(true);
-        //   return;
-        // }
-
         let url = `/notes?page=${pageNumber}&limit=10`;
 
         if (folderId) {
@@ -75,7 +53,8 @@ export default function Middle({
         }
 
         const response = await api.get<NotesResponse>(url);
-        if (requestId !== requestIdRef.current) return;
+        if (!control.click) return;
+        // if (requestId !== requestIdRef.current) return;
         const noteData = response.data.notes;
         if (pageNumber === 1) {
           setNotes(noteData);
@@ -88,7 +67,7 @@ export default function Middle({
       } catch (error) {
         console.log("Error in loading notes", error);
       } finally {
-        setLoading(false);
+        if (control.click) setLoading(false);
       }
     },
     [folderId, isFavoritesPage, isArchivedPage, isTrashPage],
@@ -98,10 +77,14 @@ export default function Middle({
   useEffect(() => {
     if (!folderId && !isFavoritesPage && !isArchivedPage && !isTrashPage)
       return;
+    const control = { click: true };
     setNotes([]);
     setHasMore(true);
-    requestIdRef.current++;
-    loadNotes(1);
+    // requestIdRef.current++;
+    loadNotes(1, control);
+    return () => {
+      control.click = false;
+    };
   }, [folderId, isFavoritesPage, isArchivedPage, isTrashPage, refreshTrigger]);
 
   // scrolling
