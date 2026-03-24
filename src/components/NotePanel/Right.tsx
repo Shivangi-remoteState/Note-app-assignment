@@ -244,7 +244,7 @@ export default function Right({
         handleDelete={() => setNoteToDelete(noteId || null)}
       />
       <div className="flex flex-col gap-4">
-        {/* note date + folder name  */}
+        {/* note date + folder name */}
         <NoteDate isNewNote={isNewNote} createdAt={note?.createdAt} />
         {/* folder switch */}
         <FolderSelector
