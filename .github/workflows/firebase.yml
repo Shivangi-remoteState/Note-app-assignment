@@ -24,4 +24,4 @@ jobs:
           repoToken: "${{ secrets.GITHUB_TOKEN }}"
           firebaseToken: "${{ secrets.FIREBASE_TOKEN }}"
           channelId: live
-          projectId: note-app-d4888
+          projectId: note-app-52847
